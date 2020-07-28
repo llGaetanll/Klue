@@ -19,7 +19,7 @@ const MyApp = ({ Component, pageProps }) => {
   return (
     <StateProvider store={store}>
       <Head>
-        <title>Charactor</title>
+        <title>Klue</title>
       </Head>
       <PersistGate loading={<p>loading...</p>} persistor={persistor}>
         <ThemeProvider theme={theme}>
