@@ -4,24 +4,47 @@ import { createSelector } from "@reduxjs/toolkit";
 
 import { GlobalHotKeys } from "react-hotkeys";
 
-import { forward, backward, setReveal, setEdit } from "../store";
+import {
+  forward,
+  backward,
+  setReveal,
+  setEdit,
+  setWeight,
+  cardContent
+} from "../src/cards";
 
-const KeyBinds = ({ children }) => {
+/* Keybinds on the main page */
+export const Main = ({ children }) => {
   const dispatch = useDispatch();
 
   const keybinds = useSelector(state => state.settings.keybinds);
-  const reveal = useSelector(state => state.card.reveal);
-  const edit = useSelector(state => state.card.edit);
+  const reveal = useSelector(state => state.cards.reveal);
+  const edit = useSelector(state => state.cards.edit);
+
+  const cardIndex = useSelector(
+    createSelector(
+      cardContent,
+      content => content.index
+    )
+  );
+
+  const handleDiff = option => {
+    dispatch(setWeight({ option, cardIndex }));
+  };
 
   const handlers = {
     FORWARD: () => dispatch(forward()),
     BACKWARD: () => dispatch(backward()),
+    EASY: () => handleDiff("easy"),
+    MEDIUM: () => handleDiff("medium"),
+    HARD: () => handleDiff("hard"),
     TOGGLE_REVEAL: useCallback(() => dispatch(setReveal(!reveal)), [reveal]),
     SET_EDIT: useCallback(() => {
       if (!edit) dispatch(setEdit(true));
     }, [edit]),
-    REM_EDIT: useCallback(() => {
+    HIDE: useCallback(() => {
       if (edit) dispatch(setEdit(false));
+      if (reveal) dispatch(setReveal(false));
     })
   };
 
@@ -37,5 +60,3 @@ const KeyBinds = ({ children }) => {
     </>
   );
 };
-
-export default KeyBinds;

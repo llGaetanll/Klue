@@ -1,29 +1,32 @@
-import { useSelector, useDispatch } from "react-redux";
+import dynamic from "next/dynamic";
+import { useSelector } from "react-redux";
+import { createSelector } from "@reduxjs/toolkit";
 
-import { Box, IconButton } from "@material-ui/core";
+import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
+import { Sidebar } from "../components/main/sidebar";
+import { Card, Bar, Options } from "../components/main";
+import { Main as KeyBinds } from "../components/keybinds";
 
-import { forward, backward } from "../store";
+import { cardContent } from "../src/cards";
 
-import Layout from "../src/layout";
-import Card from "../components/card";
-import TopBar from "../components/bar";
-
-import UploadButton from "../components/uploadButton";
-
-import { randFromInterval } from "../util";
+const Load = dynamic(() => import("./load"));
+const Test = dynamic(() => import("./test"));
 
 const useStyles = makeStyles(theme => ({
   content: {
     display: "flex",
+    flexDirection: "row",
+    flex: 1
+  },
+  card: {
+    display: "flex",
     flexDirection: "column",
-    flex: 1,
-
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+
+    flex: 2
   },
   icon: {
     flexGrow: 0
@@ -32,42 +35,25 @@ const useStyles = makeStyles(theme => ({
 
 const Index = props => {
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const kanji = useSelector(state => state.kanji);
 
-  const range = useSelector(state => state.range);
-  const edit = useSelector(state => state.card.edit);
-  const index = useSelector(state => state.index);
+  const cards = useSelector(state => state.cards.data);
+  const test = useSelector(state => state.cards.test);
 
-  const hasData = kanji.length > 0;
+  if (cards.length < 1) return <Load />;
 
-  const handleDecrement = () => dispatch(backward());
-
-  const handleIncrement = () => dispatch(forward());
+  if (test) return <Test />;
 
   return (
-    <Layout>
-      {hasData && <TopBar />}
+    <Box display="flex" flex={1} flexDirection="column">
+      <KeyBinds />
       <Box className={classes.content}>
-        {hasData ? (
-          <Box display="flex">
-            {index > 0 && edit && (
-              <IconButton className={classes.icon} onClick={handleDecrement}>
-                <ArrowBackIosIcon fontSize="large" />
-              </IconButton>
-            )}
-            <Card />
-            {index < kanji.length - 2 && (
-              <IconButton className={classes.icon} onClick={handleIncrement}>
-                <ArrowForwardIosIcon fontSize="large" />
-              </IconButton>
-            )}
-          </Box>
-        ) : (
-          <UploadButton />
-        )}
+        <Sidebar />
+        <Box className={classes.card}>
+          <Card />
+          <Options />
+        </Box>
       </Box>
-    </Layout>
+    </Box>
   );
 };
 

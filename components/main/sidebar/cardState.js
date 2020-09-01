@@ -3,17 +3,17 @@ import { useSelector, useDispatch } from "react-redux";
 
 import FileSaver from "file-saver";
 
-import { Box, Paper, Button, Divider, Input } from "@material-ui/core";
+import { Box, Paper, Divider, Input } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 import EditIcon from "@material-ui/icons/Edit";
 import UpdateIcon from "@material-ui/icons/Update";
 import GetAppIcon from "@material-ui/icons/GetApp";
 
-import UploadButton from "../uploadButton";
+import UploadButton from "../../uploadButton";
 
-import { setEdit } from "../../store";
-import { formatDate, getDate } from "../../util";
+import { setEdit } from "../../../src/cards";
+import { formatDate, getDate } from "../../../util";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -22,21 +22,22 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+/* Buttons on the bar related to card usage */
 const CardState = props => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const kanji = useSelector(state => state.kanji);
-  const edit = useSelector(state => state.card.edit);
+  const cards = useSelector(state => state.cards.data);
+  const edit = useSelector(state => state.cards.edit);
 
   const handleEdit = () => dispatch(setEdit(!edit));
 
   const handleDownload = () => {
-    const kanjiBlob = new Blob([JSON.stringify(kanji)], {
+    const cardsBlob = new Blob([JSON.stringify(cards)], {
       type: "application/json"
     });
 
-    FileSaver.saveAs(kanjiBlob, `cards [${formatDate(getDate())}].json`);
+    FileSaver.saveAs(cardsBlob, `cards [${formatDate(getDate())}].json`);
   };
 
   return (
@@ -49,14 +50,17 @@ const CardState = props => {
       >
         {edit ? "Update" : "Edit"}
       </Button>
-      <Button
-        color="primary"
-        className={classes.button}
-        onClick={handleDownload}
-        startIcon={<GetAppIcon />}
-      >
-        Download Cards
-      </Button>
+      <Tooltip title="Download Cards">
+        <IconButton
+          color="primary"
+          className={classes.button}
+          onClick={handleDownload}
+          startIcon={<GetAppIcon />}
+        >
+          <GetAppIcon />
+        </IconButton>
+      </Tooltip>
+
       <UploadButton />
     </Box>
   );

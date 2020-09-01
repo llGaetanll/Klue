@@ -17,9 +17,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column-reverse",
     position: "absolute",
     bottom: 0,
-    right: 0,
-
-    marginBottom: 48 // account for bottom tab
+    right: 0
   },
   alert: {
     position: "relative",

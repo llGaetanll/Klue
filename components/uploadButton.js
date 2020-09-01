@@ -1,23 +1,18 @@
 import { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
-import Button from "@material-ui/core/Button";
+import { IconButton, Tooltip } from "@material-ui/core";
 import PublishIcon from "@material-ui/icons/Publish";
 
 import { FeedbackContext } from "../util/feedback";
-import { store, loadKanji } from "../store";
+import store from "../store";
+import { loadCards } from "../src/cards";
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    "& > *": {
-      margin: theme.spacing(1)
-    }
-  },
   input: {
     display: "none"
   },
   button: {
-    margin: `0 ${theme.spacing(1)}px`,
     whiteSpace: "nowrap" // text spans one line
   }
 }));
@@ -36,8 +31,8 @@ const UploadButton = props => {
       // contents of file in variable
       var text = e.target.result;
 
-      store.dispatch(loadKanji(JSON.parse(text)));
-      addAlert("Successfully loaded Kanji", "success");
+      store.dispatch(loadCards(JSON.parse(text)));
+      addAlert("Successfully loaded cards", "success");
     });
 
     // file reading failed
@@ -59,14 +54,15 @@ const UploadButton = props => {
         onChange={handleChange}
       />
       <label htmlFor="contained-button-file">
-        <Button
-          color="primary"
-          component="span"
-          className={classes.button}
-          startIcon={<PublishIcon />}
-        >
-          Load Cards
-        </Button>
+        <Tooltip title="Upload Cards">
+          <IconButton
+            color="primary"
+            component="span"
+            className={classes.button}
+          >
+            <PublishIcon />
+          </IconButton>
+        </Tooltip>
       </label>
     </div>
   );

@@ -5,14 +5,12 @@ import lightBlue from "@material-ui/core/colors/lightBlue";
 // Create a theme instance.
 const theme = createMuiTheme({
   palette: {
+    type: "dark",
     primary: {
       main: amber[500]
     },
     secondary: {
       main: lightBlue.A400
-    },
-    background: {
-      default: "#f1eff4"
     }
   },
   shadows: [
@@ -25,6 +23,9 @@ const theme = createMuiTheme({
   ],
   shape: {
     borderRadius: 5
+  },
+  typography: {
+    fontFamily: ["Roboto", "Inter"]
   }
 });
 

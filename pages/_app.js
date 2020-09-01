@@ -8,8 +8,8 @@ import { PersistGate } from "redux-persist/integration/react";
 import { ThemeProvider } from "@material-ui/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
-import theme from "../src/theme";
-import { store } from "../store";
+import theme from "../util/theme";
+import store from "../store";
 
 import { FeedbackProvider } from "../util/feedback";
 
@@ -20,6 +20,10 @@ const MyApp = ({ Component, pageProps }) => {
     <StateProvider store={store}>
       <Head>
         <title>Klue</title>
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
+        />
       </Head>
       <PersistGate loading={<p>loading...</p>} persistor={persistor}>
         <ThemeProvider theme={theme}>

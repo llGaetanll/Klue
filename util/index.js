@@ -6,9 +6,8 @@
 export const isEmptyObj = obj =>
   Object.keys(obj).length === 0 && obj.constructor === Object;
 
-export const randFromInterval = (min, max) => {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-};
+export const randFromInterval = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1) + min);
 
 /**
  * getDate returns the current date as unixTimestamp
