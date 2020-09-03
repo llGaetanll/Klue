@@ -124,13 +124,15 @@ const Range = () => {
         />
       </Box>
       <Tooltip title="Update Range">
-        <IconButton
-          color="primary"
-          onClick={handleCommitRange}
-          disabled={rangeState[0] === range[0] && rangeState[1] === range[1]}
-        >
-          <UpdateIcon />
-        </IconButton>
+        <span>
+          <IconButton
+            color="primary"
+            onClick={handleCommitRange}
+            disabled={rangeState[0] === range[0] && rangeState[1] === range[1]}
+          >
+            <UpdateIcon />
+          </IconButton>
+        </span>
       </Tooltip>
     </>
   );

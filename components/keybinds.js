@@ -9,7 +9,7 @@ import {
   backward,
   setReveal,
   setEdit,
-  setWeight,
+  nextCard,
   cardContent
 } from "../src/cards";
 
@@ -29,7 +29,7 @@ export const Main = ({ children }) => {
   );
 
   const handleDiff = option => {
-    dispatch(setWeight({ option, cardIndex }));
+    dispatch(nextCard(option));
   };
 
   const handlers = {

@@ -43,6 +43,9 @@ const reducers = {
 
     // update range
     state.range = [1, cards.length];
+
+    // set index
+    state.rngIndex = getRNG(state);
   },
   setRange: (state, { payload }) => {
     state.range = payload;
@@ -50,6 +53,9 @@ const reducers = {
     // update index to be in the bounds of the new range
     if (payload[0] > state.index) state.index = payload[0];
     if (payload[1] < state.index) state.index = payload[1];
+
+    // recalculate index
+    state.rngIndex = getRNG(state);
   },
   setReveal: (state, { payload }) => {
     if (!state.edit) state.reveal = payload;
@@ -64,7 +70,9 @@ const reducers = {
   },
 
   setWeight: (state, { payload }) => {
-    const { option, cardIndex } = payload;
+    const option = payload;
+
+    const cardIndex = state.rngIndex;
 
     // good and bad constants, change these as you will
     const INC = 1.1; // 10% probability increase if user performs poorly
@@ -105,8 +113,13 @@ const reducers = {
     state.index = payload;
   },
   forward: (state, _) => {
-    // only works in edit mode
-    if (!state.edit) return;
+    // in normal mode, just randomize the index
+    if (!state.edit) {
+      state.rngIndex = getRNG(state);
+
+      return;
+    }
+
     // when editing, stepper is preserved and rngIndex is treated linearly
     state.rngIndex = state.rngIndex + 1;
   },
@@ -126,34 +139,14 @@ const reducers = {
 
     // only modify changing fields
     state.data[index] = { ...state.data[index], ...newData };
-
-    // remove edit mode
-    state.edit = false;
   }
 };
 
 /**
- * Returns the new RNG calculated value based on the index, and card weights
- * @param {*} index the linear card index to go back and forth in the card history
- * @param {*} cards the loaded cards to get the weights
+ * Problems:
+ * - repetition in reducers,
+ * - unforseen need of calling reducers inside of reducers -> as a result you have to take out your logic into a thun
  */
-const getRNG = (index, cards) => {
-  // get every weight
-  const weights = cards.map(c => c.weight);
-
-  // the rng is defined as a random, seeded number in (0, n)
-  // such that n is the sum of all weights
-  let rng = seedrandom(index)() * weights.reduce((tw, w) => tw + w);
-
-  let newRNGIndex = 0;
-  while (rng > weights[newRNGIndex]) {
-    rng -= weights[newRNGIndex];
-
-    newRNGIndex++;
-  }
-
-  return newRNGIndex;
-};
 
 /* Selectors */
 
@@ -185,49 +178,47 @@ const getRNG = (index, cards) => {
 //   }
 // );
 
-const indexSelector = createSelector(
-  state => state.cards.data,
-  state => state.cards.stepper,
-  state => state.cards.range,
-  state => state.cards.history,
-  state => state.cards.repeat,
-  (cards, step, range, history, repeat) => {
-    // add an index to every card so we can filter by range and history later
-    cards = cards.map((c, i) => ({ i, weight: c.weight }));
+const getRNG = ({ data: cards, stepper, range, history, repeat }) => {
+  // add an index to every card so we can filter by range and history later
+  cards = cards.map((c, i) => ({ i, weight: c.weight }));
 
-    // only keep cards in the apropriate range
-    cards = cards.slice(range[0] - 1, range[1]);
+  // only keep cards in the apropriate range
+  cards = cards.slice(range[0] - 1, range[1]);
 
-    // filter out the previous card from the list of possible next cards
-    // prevents having the same card twice in a row.
-    if (repeat) cards = cards.filter(card => history[0] !== card.i);
-    // remove any card in the history
-    else {
-      cards = cards.filter(card => history.indexOf(card.i) < 0);
+  // filter out the previous card from the list of possible next cards
+  // prevents having the same card twice in a row.
+  if (repeat) cards = cards.filter(card => history[0] !== card.i);
+  // remove any card in the history
+  else {
+    cards = cards.filter(card => history.indexOf(card.i) < 0);
 
-      // if we've ran through all the cards in the testing set
-      if (cards.length < 1) return -1;
-    }
-
-    console.log(cards, history);
-
-    // the rng is defined as a random, seeded number in (0, n)
-    // such that n is the sum of all weights we're interested in
-    let rng =
-      seedrandom(step)() * cards.map(c => c.weight).reduce((tw, w) => tw + w);
-
-    let i = 0;
-    while (rng > cards[i].weight) {
-      rng -= cards[i].weight;
-      i++;
-    }
-
-    return cards[i].i;
+    // if we've ran through all the cards in the testing set
+    if (cards.length < 1) return -1;
   }
-);
+
+  // the rng is defined as a random, seeded number in (0, n)
+  // such that n is the sum of all weights we're interested in
+  let rng =
+    seedrandom(stepper)() * cards.map(c => c.weight).reduce((tw, w) => tw + w);
+
+  console.log(stepper, rng);
+
+  let i = 0;
+  while (rng > cards[i].weight) {
+    rng -= cards[i].weight;
+    i++;
+  }
+
+  return cards[i].i;
+};
+
+export const nextCard = option => (dispatch, _) => {
+  dispatch(actions.setWeight(option));
+  dispatch(actions.forward());
+};
 
 export const cardContent = createSelector(
-  indexSelector,
+  state => state.cards.rngIndex,
   state => state.cards.data,
   (index, cards) => {
     // if we're done with the testing set

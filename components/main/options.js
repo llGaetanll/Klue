@@ -7,7 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 
-import { setWeight, backward, forward, cardContent } from "../../src/cards";
+import { nextCard, backward, forward, cardContent } from "../../src/cards";
 
 const useStyles = makeStyles(theme => ({
   options: {
@@ -34,7 +34,7 @@ export const Options = () => {
   const edit = useSelector(state => state.cards.edit);
 
   const handleDiff = option => {
-    dispatch(setWeight({ option, cardIndex }));
+    dispatch(nextCard(option));
   };
 
   const handlePrev = () => dispatch(backward());
