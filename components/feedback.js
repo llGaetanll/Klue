@@ -97,9 +97,16 @@ export const Dialog = ({ children, onClose, remDialog }) => {
 
   const handleExited = () => remDialog();
 
+  if (!children) return <></>;
+
   return (
-    <MuiDialog open={open} onClose={handleClose} onExited={handleExited}>
-      {children}
+    <MuiDialog
+      open={open}
+      onClose={() => handleClose(null)}
+      onExited={handleExited}
+    >
+      {/* here no need for `cloneElement` since Dialogs don't use refs */}
+      {<children.type {...children.props} onClose={handleClose} />}
     </MuiDialog>
   );
 };
@@ -120,14 +127,18 @@ export const Menu = ({ anchor, children, onClose, remMenu }) => {
 
   const handleExited = () => remMenu();
 
+  if (!children) return <></>;
+
   return (
     <MuiMenu
       anchorEl={anchor}
       open={open}
-      onClose={handleClose}
+      onClose={() => handleClose(null)}
       onExited={handleExited}
     >
-      {children}
+      {/* Allow the passing in of props directly from the setMenu function */}
+      {/* cloneElement also forwards the refs, which is necessary for a Menu */}
+      {cloneElement(children, { onClose: handleClose })}
     </MuiMenu>
   );
 };

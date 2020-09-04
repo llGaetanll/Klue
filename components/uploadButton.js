@@ -6,7 +6,7 @@ import PublishIcon from "@material-ui/icons/Publish";
 
 import { FeedbackContext } from "../util/feedback";
 import store from "../store";
-import { loadCards } from "../src/cards";
+import { setCards } from "../src/cards";
 
 const useStyles = makeStyles(theme => ({
   input: {
@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const UploadButton = props => {
+const UploadButton = ({ children }) => {
   const classes = useStyles();
 
   const { addAlert } = useContext(FeedbackContext);
@@ -31,7 +31,7 @@ const UploadButton = props => {
       // contents of file in variable
       var text = e.target.result;
 
-      store.dispatch(loadCards(JSON.parse(text)));
+      store.dispatch(setCards(JSON.parse(text)));
       addAlert("Successfully loaded cards", "success");
     });
 
@@ -53,17 +53,7 @@ const UploadButton = props => {
         type="file"
         onChange={handleChange}
       />
-      <label htmlFor="contained-button-file">
-        <Tooltip title="Upload Cards">
-          <IconButton
-            color="primary"
-            component="span"
-            className={classes.button}
-          >
-            <PublishIcon />
-          </IconButton>
-        </Tooltip>
-      </label>
+      <label htmlFor="contained-button-file">{children}</label>
     </div>
   );
 };

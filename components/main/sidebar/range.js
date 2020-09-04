@@ -87,7 +87,12 @@ const Range = () => {
   const cardsLength = useSelector(cardCountSelector);
 
   // range state is always 1 more than the actual range (to prevent index 0 instead of 1 in UI)
-  const [rangeState, setRangeState] = useState(range);
+  const [rangeState, setRangeState] = useState([]);
+
+  // when redux range updates, update state
+  useEffect(() => {
+    setRangeState([range[0] + 1, range[1] + 1]);
+  }, [range]);
 
   // when using manual inputs, its possible to have a range where
   // the first value is > than the second. setLo and setHi fix this
@@ -98,7 +103,9 @@ const Range = () => {
   const handleSetRange = (_, newValue) => setRangeState(newValue);
 
   // when change is committed, the range is updated in the state
-  const handleCommitRange = () => dispatch(setRange(rangeState));
+  // and translate from 1 base to 0 base
+  const handleCommitRange = () =>
+    dispatch(setRange([rangeState[0] - 1, rangeState[1] - 1]));
 
   return (
     <>
@@ -128,7 +135,9 @@ const Range = () => {
           <IconButton
             color="primary"
             onClick={handleCommitRange}
-            disabled={rangeState[0] === range[0] && rangeState[1] === range[1]}
+            disabled={
+              rangeState[0] - 1 === range[0] && rangeState[1] - 1 === range[1]
+            }
           >
             <UpdateIcon />
           </IconButton>

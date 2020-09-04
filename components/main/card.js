@@ -14,13 +14,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 
-import {
-  clearHistory,
-  forward,
-  updCard,
-  setEdit,
-  cardContent
-} from "../../src/cards";
+import { testAgain, updCard, setEdit, cardContent } from "../../src/cards";
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -76,10 +70,8 @@ const ModifyCard = () => {
   const setMeaning = meaning => setCardState(s => ({ ...s, meaning }));
   const setNotes = notes => setCardState(s => ({ ...s, notes }));
 
-  const handleCommitChanges = () => {
+  const handleCommitChanges = () =>
     dispatch(updCard({ index, newData: cardState }));
-    dispatch(forward());
-  };
 
   const handleCancel = () => dispatch(setEdit(false));
 
@@ -207,10 +199,7 @@ export const Card = () => {
     setAnimationState("quiz");
   }, [edit, reveal]);
 
-  const handleTestAgain = () => {
-    dispatch(clearHistory());
-    dispatch(forward());
-  };
+  const handleTestAgain = () => dispatch(testAgain());
 
   if (index < 0)
     return (

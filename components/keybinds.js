@@ -9,7 +9,7 @@ import {
   backward,
   setReveal,
   setEdit,
-  nextCard,
+  next,
   cardContent
 } from "../src/cards";
 
@@ -29,11 +29,13 @@ export const Main = ({ children }) => {
   );
 
   const handleDiff = option => {
-    dispatch(nextCard(option));
+    dispatch(next(option));
   };
 
   const handlers = {
-    FORWARD: () => dispatch(forward()),
+    FORWARD: useCallback(() => {
+      if (edit) dispatch(forward());
+    }, [reveal]),
     BACKWARD: () => dispatch(backward()),
     EASY: () => handleDiff("easy"),
     MEDIUM: () => handleDiff("medium"),

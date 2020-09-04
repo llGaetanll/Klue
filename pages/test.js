@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Box, Paper, Button, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { setWeight, forward, backward, cardContent } from "../src/cards";
+import { next, forward, backward, cardContent } from "../src/cards";
 
 const Index = dynamic(() => import("./index"));
 
@@ -60,7 +60,7 @@ const Test = props => {
 
   // when cardState updates, except on initial render
   useEffect(() => {
-    if (cardState) dispatch(setWeight(cardState));
+    if (cardState) dispatch(next(cardState));
   }, [cardState]);
 
   const handleLast = () => dispatch(backward());

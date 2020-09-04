@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createSelector } from "@reduxjs/toolkit";
 
 const initialState = {
   keybinds: {
@@ -15,12 +15,18 @@ const initialState = {
 };
 
 const reducers = {
-  setTheme: (state, { payload }) => {
-    const theme = payload; // 'dark' or 'light'
+  toggleTheme: (state, _) => {
+    const theme = state.theme;
 
-    state.theme = theme;
+    state.theme = theme === "light" ? "dark" : "light";
   }
 };
+
+// in case we decice to add more theme variants in the future, a selector is good
+export const darkSelector = createSelector(
+  [state => state.settings.theme],
+  theme => theme === "dark"
+);
 
 const { reducer: settingsReducer, actions } = createSlice({
   name: "settings",
@@ -29,6 +35,7 @@ const { reducer: settingsReducer, actions } = createSlice({
 });
 
 module.exports = {
+  ...module.exports,
   settingsReducer,
   ...actions
 };

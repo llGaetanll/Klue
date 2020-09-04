@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { motion } from "framer-motion";
@@ -6,19 +6,33 @@ import {
   Box,
   Paper,
   Tooltip,
+  Typography,
   IconButton,
   Switch,
-  FormControlLabel
+  FormControlLabel,
+  Button,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 import GetAppIcon from "@material-ui/icons/GetApp";
-import FileSaver from "file-saver";
 
 import UploadButton from "../../uploadButton";
+import PublishIcon from "@material-ui/icons/Publish";
+import SettingsIcon from "@material-ui/icons/Settings";
+
 import Range from "./range";
-import { setRepeat } from "../../../src/cards";
-import { formatDate, getDate } from "../../../util";
+import {
+  setRepeat,
+  getCards,
+  itemsSelector,
+  setIndex
+} from "../../../src/cards";
+import { toggleTheme, darkSelector } from "../../../src/settings";
+
+import { FeedbackContext } from "../../../util/feedback";
 
 const useStyles = makeStyles(theme => ({
   sidebar: {
@@ -39,6 +53,7 @@ const useStyles = makeStyles(theme => ({
     float: "left",
     width: 7,
     height: 7,
+
     borderRadius: "50%",
     marginRight: 5,
     marginBottom: 5,
@@ -51,79 +66,153 @@ const COLOR = theme => ({
   inactive: theme.palette.grey[800],
   active: theme.palette.grey[700],
   visited: theme.palette.success.dark,
-  current: theme.palette.main
+
+  current: theme.palette.info.main,
+
+  named: theme.palette.warning.light,
+  filled: theme.palette.warning.dark
 });
 
-const Item = ({ itemState = "inactive" }) => {
+const Item = ({ index, itemState }) => {
+  const dispatch = useDispatch();
   const classes = useStyles({ itemState });
 
-  return <Paper className={classes.dot} />;
-};
-
-export const Sidebar = () => {
-  const classes = useStyles();
-  const dispatch = useDispatch();
-
-  const cards = useSelector(state => state.cards.data);
-  const range = useSelector(state => state.cards.range);
-  const history = useSelector(state => state.cards.history);
-
-  const handleDownload = () => {
-    const cardsBlob = new Blob([JSON.stringify(cards)], {
-      type: "application/json"
-    });
-
-    FileSaver.saveAs(cardsBlob, `cards [${formatDate(getDate())}].json`);
+  const handleSetCard = () => {
+    dispatch(setIndex(index));
   };
 
-  const handleTheme = () => {};
+  return <Paper className={classes.dot} onClick={handleSetCard} />;
+};
+
+const Settings = props => {
+  const dispatch = useDispatch();
 
   const repeatCards = useSelector(state => state.cards.repeat);
+  const isDark = useSelector(darkSelector);
 
   const handleRepeat = () => dispatch(setRepeat(!repeatCards));
 
+  const handleTheme = () => dispatch(toggleTheme());
+
   return (
-    <Box className={classes.sidebar}>
-      <Box display="flex">
-        <Range />
-        <Tooltip title="Download Cards">
-          <IconButton
-            color="primary"
-            className={classes.button}
-            onClick={handleDownload}
-          >
-            <GetAppIcon />
+    <>
+      <DialogTitle>Settings</DialogTitle>
+      <DialogContent>
+        <Box display="flex" flexDirection="column">
+          <FormControlLabel
+            control={
+              <Switch
+                color="primary"
+                checked={repeatCards}
+                onChange={handleRepeat}
+              />
+            }
+            label="Repeat Cards"
+          />
+          <FormControlLabel
+            control={
+              <Switch color="primary" checked={isDark} onChange={handleTheme} />
+            }
+            label="Dark Theme"
+          />
+        </Box>
+      </DialogContent>
+    </>
+  );
+};
+
+const UploadWarning = ({ onClose }) => {
+  const dispatch = useDispatch();
+
+  const handleDownload = () => {
+    dispatch(getCards());
+    onClose();
+  };
+
+  return (
+    <>
+      <DialogTitle>Wait!</DialogTitle>
+      <DialogContent>
+        <Typography>
+          Uploading a new set of cards will override the current one. Consider
+          downloading this card set if you haven't already.
+        </Typography>
+
+        <DialogActions>
+          <Button onClick={handleDownload} color="primary">
+            Download Cards
+          </Button>
+          <Button onClick={onClose}>I know what I'm doing</Button>
+        </DialogActions>
+      </DialogContent>
+    </>
+  );
+};
+
+const ButtonBar = () => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const { setDialog } = useContext(FeedbackContext);
+
+  const handleDownload = () => dispatch(getCards());
+
+  const handleSettings = () => setDialog(<Settings />);
+
+  // const handleUpload = event => {
+  //   event.preventDefault();
+  //   setDialog(<UploadWarning />);
+  // };
+
+  return (
+    <Box display="flex">
+      <Range />
+
+      <Tooltip title="Download Cards">
+        <IconButton
+          color="primary"
+          className={classes.button}
+          onClick={handleDownload}
+        >
+          <GetAppIcon />
+        </IconButton>
+      </Tooltip>
+
+      <UploadButton>
+        <Tooltip title="Upload Cards">
+          <IconButton color="primary" component="span">
+            <PublishIcon />
           </IconButton>
         </Tooltip>
-        <UploadButton />
-      </Box>
-      <Box display="flex">
-        {/* <Switch checked={isDark} onChange={handleTheme} /> */}
-        <FormControlLabel
-          control={
-            <Switch
-              color="primary"
-              checked={repeatCards}
-              onChange={handleRepeat}
-            />
-          }
-          label="Repeat Cards"
-        />
-      </Box>
+      </UploadButton>
 
-      <Box className={classes.dots}>
-        {cards.map(({ char }, i) => {
-          let itemState = "inactive";
-
-          if (i + 1 >= range[0] && i + 1 <= range[1]) itemState = "active";
-
-          if (history.indexOf(i) > -1) itemState = "visited";
-
-          return <Item character={char} itemState={itemState} />;
-        })}
-      </Box>
+      <Tooltip title="Settings">
+        <IconButton
+          color="primary"
+          className={classes.button}
+          onClick={handleSettings}
+        >
+          <SettingsIcon />
+        </IconButton>
+      </Tooltip>
     </Box>
   );
 };
 
-// history.indexOf(i) > -1 &&
+export const Sidebar = () => {
+  const classes = useStyles();
+
+  const items = useSelector(itemsSelector);
+
+  return (
+    <Box className={classes.sidebar}>
+      <ButtonBar />
+
+      <Box className={classes.dots}>
+        {items.map((props, i) => (
+          <Item index={i} {...props} />
+        ))}
+      </Box>
+    </Box>
+  );
+};
