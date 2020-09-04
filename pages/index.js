@@ -12,7 +12,6 @@ import { Main as KeyBinds } from "../components/keybinds";
 import { cardContent } from "../src/cards";
 
 const Load = dynamic(() => import("./load"));
-const Test = dynamic(() => import("./test"));
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -40,8 +39,6 @@ const Index = props => {
   const test = useSelector(state => state.cards.test);
 
   if (cards.length < 1) return <Load />;
-
-  if (test) return <Test />;
 
   return (
     <Box display="flex" flex={1} flexDirection="column">
