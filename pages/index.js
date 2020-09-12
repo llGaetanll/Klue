@@ -6,13 +6,12 @@ import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { Sidebar } from "../components/main/sidebar";
-import { Card, Bar, Options } from "../components/main";
+import { Card, Bar, Options } from "../components/main/card";
 import { Main as KeyBinds } from "../components/keybinds";
 
 import { cardContent } from "../src/cards";
 
 const Load = dynamic(() => import("./load"));
-const Test = dynamic(() => import("./test"));
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -40,8 +39,6 @@ const Index = props => {
   const test = useSelector(state => state.cards.test);
 
   if (cards.length < 1) return <Load />;
-
-  if (test) return <Test />;
 
   return (
     <Box display="flex" flex={1} flexDirection="column">

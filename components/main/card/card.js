@@ -9,12 +9,16 @@ import {
   Typography,
   Card as MuiCard,
   CardContent,
-  TextField
+  TextField,
+  Tooltip
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 
-import { testAgain, updCard, setEdit, cardContent } from "../../src/cards";
+import { EndOfTest } from './statistics'
+
+import { beginTest, updCard, setEdit, setTesting, cardContent, statSelector } from "../../../src/cards";
+import { round } from '../../../util'
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -58,7 +62,7 @@ const ModifyCard = () => {
     notes: ""
   });
 
-  const { meaning = "", notes = "", index, weight } = useSelector(cardContent);
+  const { meaning = "", notes = "", index } = useSelector(cardContent);
 
   // update fields when index or field changes
   useEffect(() => setMeaning(meaning), [meaning, index]);
@@ -161,6 +165,7 @@ const CardInfo = () => {
   );
 };
 
+
 export const Card = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -181,6 +186,7 @@ export const Card = () => {
     )
   );
 
+  const test = useSelector(state => state.cards.test);
   const edit = useSelector(state => state.cards.edit);
   const reveal = useSelector(state => state.cards.reveal);
 
@@ -199,17 +205,18 @@ export const Card = () => {
     setAnimationState("quiz");
   }, [edit, reveal]);
 
-  const handleTestAgain = () => dispatch(testAgain());
+  const handleBeginTest = () => dispatch(beginTest())
 
-  if (index < 0)
+  if (!test)
     return (
-      <Box display="flex" flexDirection="column">
-        <Typography variant="h3">All Set!</Typography>
-        <Button color="primary" onClick={handleTestAgain}>
-          Test Again
-        </Button>
+      <Box>
+        <Button onClick={handleBeginTest}>Begin Test</Button>
       </Box>
     );
+
+  if (index < 0) {
+    return <EndOfTest />
+  }
 
   return (
     <MuiCard className={classes.card}>

@@ -1,14 +1,13 @@
 import {
   createSlice,
-  configureStore,
-  getDefaultMiddleware,
   createSelector,
-  current
 } from "@reduxjs/toolkit";
+import { createSelectorCreator, defaultMemoize } from 'reselect';
 
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
+import { isEqual } from 'lodash'
 import FileSaver from "file-saver";
 import seedrandom from "seedrandom";
 
@@ -20,20 +19,25 @@ const initialState = {
   history: [], // history of all visited cards since the beginning of the session. null by default to disable history
 
   stepper: 0, // used to calculate rng card index
-  index: 0, // randomized by the stepper, or incremented when in edit mode
+  index: -1, // randomized by the stepper, or incremented when in edit mode
 
   repeat: false,
-  test: false, // if the card set is for a test
   reveal: false,
-  edit: false
+  edit: false,
+
+  mode: 'normal',
+  test: false, // if we are testing
+  testData: {
+    cardTimes: [], // timestamp of when one of the three card options has been clicked. the first timestamp is the start of the test, the last is the end.
+    weightsPreTest: [] // so we can compare improvements after the end of the test
+  }
 };
 
 const reducers = {
   // called when the data of a card is updated
   // (i.e. when a user writes the def. of a card)
   updCard: (state, action) => {
-    const { index, newData } = action.payload;
-
+    const { index, newData } = action.payload; 
     // only modify changing fields
     state.data[index] = { ...state.data[index], ...newData };
 
@@ -107,6 +111,8 @@ const reducers = {
     // add current card to the history
     caseReducers.addHistory(state, { payload: state.index });
 
+    caseReducers.addCardTime(state, { payload: Date.now() }) // add current time to testData
+
     // increase stepper and increment rng index
     state.stepper = state.stepper + 1;
     caseReducers.setIndex(state, {});
@@ -122,6 +128,8 @@ const reducers = {
     // pop first value of history and make it the index
     state.index = state.history[0];
     const [__, ...history] = state.history;
+
+    caseReducers.popCardTime(state, {}); // remove the last cardTimestamp
 
     state.history = history;
   },
@@ -183,6 +191,9 @@ const reducers = {
 
   /* params */
   setRange: (state, { payload }) => {
+    // don't let the user change the range during a test
+    if (state.test) return;
+
     state.range = payload;
 
     caseReducers.setIndex(state, {});
@@ -198,6 +209,7 @@ const reducers = {
     }
 
     state.edit = payload;
+    caseReducers.setTesting(state, { payload: false }) // editing cancels a test
   },
   setRepeat: (state, { payload }) => {
     state.repeat = payload;
@@ -210,6 +222,57 @@ const reducers = {
   },
   clrHistory: (state, _) => {
     state.history = [];
+  },
+  setMode: (state, { payload }) => {
+    state.mode = payload;
+
+    switch (payload) {
+      // testing mode
+      case "test": {
+        // if we're going into testing mode
+        // record pre-weights
+        const cards = state.data.slice(state.range[0], state.range[1] + 1);
+
+        state.testData.weightsPreTest = cards.map(card => card.weight); // keep only the weights
+      }
+      // edit mode
+      case "edit": {
+
+      }
+      // normal mode
+      default: {
+
+      }
+    }
+  },
+
+  setTesting: (state, { payload }) => {
+    state.test = payload;
+
+    // if we're going into testing mode
+    // record pre-weights
+    if (payload) {
+      // only keep cards in the apropriate range
+      // cards = cards.slice(state.range[0] - 1, state.range[1]);
+      const cards = state.data.slice(state.range[0], state.range[1] + 1);
+
+      state.testData.weightsPreTest = cards.map(card => card.weight); // keep only the weights
+    }
+
+    // add first and last time to `cardTimes` so we can measure the length of the test
+    const currentTime = Date.now();    
+    state.testData.cardTimes = [...state.testData.cardTimes, currentTime]
+  },
+  clrTestData: (state, _) => {
+    state.testData.weightsPreTest = [];
+    state.testData.cardTimes = [];
+  },
+  addCardTime: (state, { payload }) => {
+    state.testData.cardTimes = [...state.testData.cardTimes, payload];
+  },
+  popCardTime: (state, _) => {
+    // pop off the last cardTime
+    state.testData.cardTimes.pop();
   }
 };
 
@@ -225,9 +288,11 @@ export const next = option => (dispatch, getState) => {
 };
 
 /* Thunk user when a test with no repeats is completed */
-export const testAgain = () => (dispatch, getState) => {
+export const beginTest = () => (dispatch, _) => {
   dispatch(actions.clrHistory());
+  dispatch(actions.clrTestData());
   dispatch(actions.forward());
+  dispatch(actions.setTesting({ payload: true}));
 };
 
 export const cardContent = createSelector(
@@ -249,12 +314,22 @@ export const cardContent = createSelector(
   }
 );
 
-export const itemsSelector = createSelector(
-  state => state.cards.index,
-  state => state.cards.data,
-  state => state.cards.range,
-  state => state.cards.history,
-  state => state.cards.edit,
+// create a "selector creator" that uses lodash.isEqual instead of ===
+const createDeepSelector = createSelectorCreator(
+  defaultMemoize,
+  isEqual
+)
+
+// returns mapped data for the cardset visualization in the sidebar
+export const itemsSelector = createDeepSelector(
+  [
+    state => state.cards.index,
+    // map through cards to prevent unnecessary rerenders on weight changes
+    state => state.cards.data.map(card => ({ meaning: card.meaning, notes: card.notes})), 
+    state => state.cards.range,
+    state => state.cards.history,
+    state => state.cards.edit
+  ],
   (index, cards, range, history, edit) => {
     if (edit)
       return cards.map(({ meaning, notes }, i) => {
@@ -285,6 +360,32 @@ export const itemsSelector = createSelector(
   }
 );
 
+// returns statistics about the test that just concluded
+export const statSelector = createSelector(
+  state => state.cards.data.slice(state.cards.range[0], state.cards.range[1] + 1).map(cards => cards.weight),
+  state => state.cards.testData.weightsPreTest,
+  state => state.cards.testData.cardTimes,
+  (newCardWeights, oldCardWeights, cardTimeStamps) => {
+    const weightDeltas = newCardWeights.map((weight, i) => weight - oldCardWeights[i]); // calculate card improvement for each card
+    const avgWeightDelta = weightDeltas.reduce((twd, wd) => twd + wd) / weightDeltas.length; // calculate average card improvement
+
+    const [_, ...cardTimes] = cardTimeStamps.map((ts, i) => ts - cardTimeStamps[Math.max(0, i - 1)]); // calculate array of deltas, the first value being 0 is ignored
+    const totalTime = cardTimeStamps[cardTimeStamps.length - 1] - cardTimeStamps[0]; // last time - first time to get total time spent on test
+    const avgTime = cardTimes.reduce((tt, ct) => tt + ct) / cardTimes.length; // get average time spent on card
+
+    return {
+      cardStats: weightDeltas.map((wd, i) => ({
+        weightDelta: wd,
+        prevWeight: oldCardWeights[i],
+        time: cardTimes[i]
+      })),
+      avgWeightDelta,
+      totalTime,
+      avgTime
+    }
+  }
+)
+
 const { reducer, caseReducers, actions } = createSlice({
   name: "cards",
   initialState,
@@ -296,7 +397,7 @@ export const cardsReducer = persistReducer(
   {
     key: "cards",
     storage,
-    blacklist: ["reveal", "edit", "history"]
+    blacklist: ["reveal", "edit", "history", "test", "index", "testData"]
   },
   reducer
 );

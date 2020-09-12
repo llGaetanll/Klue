@@ -34,3 +34,9 @@ export const formatDate = (dateTime, useAmericanDate = false) => {
 
   return date + `-${y}`;
 };
+
+/**
+ * Rounds a number to n decimal places
+ */
+export const round = (number, decimalCount) => 
+  Math.round(number * Math.pow(10, decimalCount)) / Math.pow(10, decimalCount);

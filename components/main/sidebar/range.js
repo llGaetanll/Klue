@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "@reduxjs/toolkit";
 
@@ -14,7 +14,6 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import UpdateIcon from "@material-ui/icons/Update";
 
-import { FeedbackContext } from "../../../util/feedback";
 import { setRange } from "../../../src/cards";
 
 const useStyles = makeStyles(theme => ({
@@ -41,7 +40,7 @@ const cardCountSelector = createSelector(
   cards => cards.length
 );
 
-const SliderInput = ({ value, setValue, ...props }) => {
+const SliderInput = ({ value, setValue, length, ...props }) => {
   const classes = useStyles();
   const [valueState, setValueState] = useState();
   const cardsLength = useSelector(cardCountSelector);
@@ -60,8 +59,6 @@ const SliderInput = ({ value, setValue, ...props }) => {
     else setValue(value);
   };
 
-  const { length } = props;
-
   return (
     <Paper className={classes.input}>
       <InputBase
@@ -73,6 +70,7 @@ const SliderInput = ({ value, setValue, ...props }) => {
         value={valueState}
         onChange={handleChange}
         type="number"
+        {...props}
       />
     </Paper>
   );
@@ -80,9 +78,9 @@ const SliderInput = ({ value, setValue, ...props }) => {
 
 const Range = () => {
   const classes = useStyles();
-  const { addAlert } = useContext(FeedbackContext);
   const dispatch = useDispatch();
 
+  const testing = useSelector(state => state.cards.test);
   const range = useSelector(state => state.cards.range);
   const cardsLength = useSelector(cardCountSelector);
 
@@ -114,6 +112,8 @@ const Range = () => {
           length={cardsLength}
           value={rangeState[0]}
           setValue={setLo}
+
+          disabled={testing}
         />
         <Slider
           value={rangeState}
@@ -122,12 +122,16 @@ const Range = () => {
           onChange={handleSetRange}
           valueLabelDisplay="off"
           className={classes.slider}
+
+          disabled={testing}
         />
 
         <SliderInput
           length={cardsLength}
           value={rangeState[1]}
           setValue={setHi}
+
+          disabled={testing}
         />
       </Box>
       <Tooltip title="Update Range">

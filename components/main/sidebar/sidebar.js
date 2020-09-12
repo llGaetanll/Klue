@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useMemo, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { motion } from "framer-motion";
@@ -87,6 +87,8 @@ const Item = ({ index, itemState }) => {
 const Settings = props => {
   const dispatch = useDispatch();
 
+  const testing = useSelector(state => state.cards.test);
+
   const repeatCards = useSelector(state => state.cards.repeat);
   const isDark = useSelector(darkSelector);
 
@@ -103,6 +105,7 @@ const Settings = props => {
             control={
               <Switch
                 color="primary"
+                disabled={testing}
                 checked={repeatCards}
                 onChange={handleRepeat}
               />
@@ -199,20 +202,28 @@ const ButtonBar = () => {
   );
 };
 
-export const Sidebar = () => {
+const CardVisual = () => {
   const classes = useStyles();
 
   const items = useSelector(itemsSelector);
 
   return (
+    <Box className={classes.dots}>
+      {items.map((props, i) => (
+        <Item index={i} {...props} />
+      ))}
+    </Box>
+  );
+}
+
+export const Sidebar = () => {
+  const classes = useStyles();
+
+  return (
     <Box className={classes.sidebar}>
       <ButtonBar />
 
-      <Box className={classes.dots}>
-        {items.map((props, i) => (
-          <Item index={i} {...props} />
-        ))}
-      </Box>
+      <CardVisual />
     </Box>
   );
 };
