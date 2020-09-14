@@ -6,21 +6,26 @@ import {
   Tooltip
 } from "@material-ui/core";
 
-import { beginTest, statSelector } from "../../../src/cards";
-import { round } from '../../../util';
+import { setMode, statSelector } from "../src/cards";
+import { round } from '../util';
 
-export const EndOfTest = props => {
+export const EndOfTest = () => {
   const dispatch = useDispatch();
 
-  const handleTestAgain = () => dispatch(beginTest());
+  const handleMode = mode => dispatch(setMode(mode));
 
   return (
       <Box display="flex" flexDirection="column">
         <Typography variant="h3">All Set!</Typography>
         <Statistics />
-        <Button color="primary" onClick={handleTestAgain}>
+        <Box display="flex">
+        <Button onClick={() => handleMode('normal')}>
+          Back to Cards
+        </Button>
+        <Button color="primary" onClick={() => handleMode('test')}>
           Test Again
         </Button>
+        </Box>
       </Box>
     );
 }

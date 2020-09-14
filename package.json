@@ -12,6 +12,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.49",
     "@reduxjs/toolkit": "^1.4.0",
+    "d3-interpolate": "^2.0.1",
     "file-saver": "^2.0.2",
     "formik": "^2.1.5",
     "framer-motion": "^2.6.5",

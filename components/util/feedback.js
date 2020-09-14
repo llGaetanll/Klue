@@ -9,7 +9,7 @@ import {
 
 import { makeStyles } from "@material-ui/core/styles";
 
-import { isEmptyObj } from "../util";
+import { isEmptyObj } from "../../util";
 
 const useStyles = makeStyles(theme => ({
   alertList: {
@@ -17,7 +17,9 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column-reverse",
     position: "absolute",
     bottom: 0,
-    right: 0
+    right: 0,
+
+    marginBottom: 48 // account for bottom tab
   },
   alert: {
     position: "relative",

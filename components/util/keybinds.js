@@ -8,10 +8,11 @@ import {
   forward,
   backward,
   setReveal,
-  setEdit,
+  setMode,
   next,
-  cardContent
-} from "../src/cards";
+  cardContent,
+  editSelector
+} from "../../src/cards";
 
 /* Keybinds on the main page */
 export const Main = ({ children }) => {
@@ -19,14 +20,7 @@ export const Main = ({ children }) => {
 
   const keybinds = useSelector(state => state.settings.keybinds);
   const reveal = useSelector(state => state.cards.reveal);
-  const edit = useSelector(state => state.cards.edit);
-
-  const cardIndex = useSelector(
-    createSelector(
-      cardContent,
-      content => content.index
-    )
-  );
+  const edit = useSelector(editSelector);
 
   const handleDiff = option => {
     dispatch(next(option));
@@ -42,10 +36,10 @@ export const Main = ({ children }) => {
     HARD: () => handleDiff("hard"),
     TOGGLE_REVEAL: useCallback(() => dispatch(setReveal(!reveal)), [reveal]),
     SET_EDIT: useCallback(() => {
-      if (!edit) dispatch(setEdit(true));
+      if (!edit) dispatch(setMode("edit"));
     }, [edit]),
     HIDE: useCallback(() => {
-      if (edit) dispatch(setEdit(false));
+      if (edit) dispatch(setMode("normal"));
       if (reveal) dispatch(setReveal(false));
     })
   };

@@ -10,22 +10,21 @@ import {
   Card as MuiCard,
   CardContent,
   TextField,
-  Tooltip
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 
-import { EndOfTest } from './statistics'
+import { EndOfTest } from '../statistics'
 
-import { beginTest, updCard, setEdit, setTesting, cardContent, statSelector } from "../../../src/cards";
-import { round } from '../../../util'
+import { setMode, updCard, cardContent, testingSelector, editSelector } from "../../src/cards";
 
 const useStyles = makeStyles(theme => ({
   card: {
     width: 300,
-    height: 400,
+    minHeight: 400,
 
-    display: "flex"
+    display: "flex",
+    userSelect: 'none'
   },
   content: {
     display: "block",
@@ -77,7 +76,7 @@ const ModifyCard = () => {
   const handleCommitChanges = () =>
     dispatch(updCard({ index, newData: cardState }));
 
-  const handleCancel = () => dispatch(setEdit(false));
+  const handleCancel = () => dispatch(setMode("normal"));
 
   useEffect(() => {
     inputRef.current.focus();
@@ -186,8 +185,15 @@ export const Card = () => {
     )
   );
 
-  const test = useSelector(state => state.cards.test);
-  const edit = useSelector(state => state.cards.edit);
+  const weight = useSelector(
+    createSelector(
+      cardContent,
+      content => content.weight
+    )
+  );
+
+  const test = useSelector(testingSelector);
+  const edit = useSelector(editSelector);
   const reveal = useSelector(state => state.cards.reveal);
 
   // update animation state
@@ -205,14 +211,14 @@ export const Card = () => {
     setAnimationState("quiz");
   }, [edit, reveal]);
 
-  const handleBeginTest = () => dispatch(beginTest())
+  const handleBeginTest = () => dispatch(setMode("test"))
 
-  if (!test)
-    return (
-      <Box>
-        <Button onClick={handleBeginTest}>Begin Test</Button>
-      </Box>
-    );
+  // if (!test)
+    // return (
+      // <Box>
+        // <Button onClick={handleBeginTest}>Begin Test</Button>
+      // </Box>
+    // );
 
   if (index < 0) {
     return <EndOfTest />

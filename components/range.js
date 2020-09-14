@@ -5,16 +5,20 @@ import { createSelector } from "@reduxjs/toolkit";
 import {
   Paper,
   Box,
+  Button,
   Slider,
-  InputBase,
+  Tooltip,
   IconButton,
-  Tooltip
+  InputBase,
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
 
 import UpdateIcon from "@material-ui/icons/Update";
+import CloseIcon from "@material-ui/icons/Close";
+import DoneAllIcon from "@material-ui/icons/DoneAll";
 
-import { setRange } from "../../../src/cards";
+import { makeStyles } from "@material-ui/core/styles";
+
+import { setMode, setRange, testingSelector, normalSelector } from "../src/cards";
 
 const useStyles = makeStyles(theme => ({
   range: {
@@ -22,10 +26,10 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "center",
     alignItems: "center",
 
-    margin: `0 -${theme.spacing(2)}px`
+    // margin: `0 -${theme.spacing(2)}px`
   },
   slider: {
-    width: 200
+    width: 1000
   },
   input: {
     margin: `0 ${theme.spacing(2)}px`,
@@ -76,11 +80,55 @@ const SliderInput = ({ value, setValue, length, ...props }) => {
   );
 };
 
+const ModeSwitch = () => {
+  const dispatch = useDispatch();
+
+  const mode = useSelector(state => state.cards.mode)
+
+  const handleNormal = () =>
+    dispatch(setMode("normal"));
+
+  const handleTest = () => {
+    dispatch(setMode("test"))
+  }
+
+  switch (mode) {
+    case "test":
+      return (
+        <Tooltip title="Back to Normal Mode">
+          <span>
+            <Button
+              color="primary"
+              onClick={handleNormal}
+              startIcon={<CloseIcon />}
+              style={{ whiteSpace: 'nowrap' }}
+            >
+              Cancel Test
+            </Button>
+          </span>
+        </Tooltip>
+      )
+    case "normal": 
+      return (
+        <Button
+          color="primary"
+          onClick={handleTest}
+          startIcon={<DoneAllIcon />}
+          style={{ whiteSpace: 'nowrap' }}
+        >
+          Start Test
+        </Button>
+      )
+  }
+}
+
 const Range = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const testing = useSelector(state => state.cards.test);
+  const normal = useSelector(normalSelector);
+  const testing = useSelector(testingSelector);
+
   const range = useSelector(state => state.cards.range);
   const cardsLength = useSelector(cardCountSelector);
 
@@ -102,11 +150,62 @@ const Range = () => {
 
   // when change is committed, the range is updated in the state
   // and translate from 1 base to 0 base
-  const handleCommitRange = () =>
-    dispatch(setRange([rangeState[0] - 1, rangeState[1] - 1]));
+  const handleCommitRange = () => {
+    // if the range hasn't changed, ignore
+    if (rangeState[0] - 1 === range[0] && rangeState[1] - 1 === range[1])
+      return;
+    
+    dispatch(setRange([rangeState[0] - 1, rangeState[1] - 1]))
+  }
+
+  const handleNormal = () =>
+    dispatch(setMode("normal"));
+
+  const handleTest = () => {
+    handleCommitRange(); // update range before testing
+    dispatch(setMode("test"))
+  }
 
   return (
-    <>
+    <>{testing && (
+        <Tooltip title="Back to Normal Mode">
+          <span>
+            <Button
+              color="primary"
+              onClick={handleNormal}
+              startIcon={<CloseIcon />}
+              style={{ whiteSpace: 'nowrap' }}
+            >
+              Cancel Test
+            </Button>
+          </span>
+        </Tooltip>
+      )}
+      {normal && (
+      <>
+        <Button
+          color="primary"
+          onClick={handleTest}
+          startIcon={<DoneAllIcon />}
+          style={{ whiteSpace: 'nowrap' }}
+        >
+          Start Test
+        </Button>
+        <Tooltip title="Update Range">
+          <span>
+            <IconButton
+              color="primary"
+              onClick={handleCommitRange}
+              disabled={
+                rangeState[0] - 1 === range[0] && rangeState[1] - 1 === range[1]
+              }
+            >
+              <UpdateIcon />
+            </IconButton>
+          </span>
+        </Tooltip>
+      </>
+      )}
       <Box className={classes.range}>
         <SliderInput
           length={cardsLength}
@@ -134,19 +233,6 @@ const Range = () => {
           disabled={testing}
         />
       </Box>
-      <Tooltip title="Update Range">
-        <span>
-          <IconButton
-            color="primary"
-            onClick={handleCommitRange}
-            disabled={
-              rangeState[0] - 1 === range[0] && rangeState[1] - 1 === range[1]
-            }
-          >
-            <UpdateIcon />
-          </IconButton>
-        </span>
-      </Tooltip>
     </>
   );
 };
