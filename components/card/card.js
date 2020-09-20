@@ -85,7 +85,6 @@ const ModifyCard = () => {
   return (
     <Box
       display="flex"
-      alignItems="center"
       justifyContent="center"
       flexDirection="column"
     >
@@ -106,7 +105,7 @@ const ModifyCard = () => {
         rows={4}
         multiline
       />
-      <Box display="flex">
+      <Box display="flex" justifyContent="center">
         <Button onClick={handleCancel}>Cancel</Button>
         <Button
           color="primary"
@@ -156,7 +155,7 @@ const CardInfo = () => {
         </Typography>
       )}
       {notes && (
-        <Typography variant="p" className={classes.notes}>
+        <Typography className={classes.notes}>
           {notes}
         </Typography>
       )}
@@ -210,15 +209,6 @@ export const Card = () => {
 
     setAnimationState("quiz");
   }, [edit, reveal]);
-
-  const handleBeginTest = () => dispatch(setMode("test"))
-
-  // if (!test)
-    // return (
-      // <Box>
-        // <Button onClick={handleBeginTest}>Begin Test</Button>
-      // </Box>
-    // );
 
   if (index < 0) {
     return <EndOfTest />

@@ -4,8 +4,9 @@ import {
   Box,
   Typography,
   Switch,
-  FormControlLabel,
+  Checkbox,
   Button,
+  FormControlLabel,
   DialogTitle,
   DialogContent,
   DialogActions
@@ -14,12 +15,15 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import {
   setRepeat,
+  setAutoAdvance,
   getCards,
 } from "../src/cards";
-import { toggleTheme, darkSelector } from "../src/settings";
+import { toggleTheme, toggleIndex, toggleWeight, darkSelector } from "../src/settings";
 
 const useStyles = makeStyles(theme => ({
-
+  sectionTitle: {
+    // fontSize: '2em'
+  }
 }));
 
 const UploadWarning = ({ onClose }) => {
@@ -51,22 +55,29 @@ const UploadWarning = ({ onClose }) => {
 };
 
 const Settings = props => {
+  const classes = useStyles();
   const dispatch = useDispatch();
 
   const testing = useSelector(state => state.cards.test);
 
+  // const isDark = useSelector(darkSelector);
   const repeatCards = useSelector(state => state.cards.repeat);
-  const isDark = useSelector(darkSelector);
+  const autoAdvance = useSelector(state => state.cards.autoAdvance);
+  const showIndex = useSelector(state => state.settings.showIndex);
+  const showWeight = useSelector(state => state.settings.showWeight);
 
+  // const handleTheme = () => dispatch(toggleTheme());
   const handleRepeat = () => dispatch(setRepeat(!repeatCards));
-
-  const handleTheme = () => dispatch(toggleTheme());
+  const handleAdvance = () => dispatch(setAutoAdvance(!autoAdvance));
+  const handleIndex = () => dispatch(toggleIndex());
+  const handleWeight = () => dispatch(toggleWeight());
 
   return (
     <>
       <DialogTitle>Settings</DialogTitle>
       <DialogContent>
         <Box display="flex" flexDirection="column">
+          <Typography component="h1" variant="caption" className={classes.sectionTitle}>Test Mode</Typography>
           <FormControlLabel
             control={
               <Switch
@@ -78,12 +89,46 @@ const Settings = props => {
             }
             label="Repeat Cards"
           />
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="primary"
+                disabled={testing}
+                checked={showIndex}
+                onChange={handleIndex}
+              />
+            }
+            label="Display Card Number"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="primary"
+                disabled={testing}
+                checked={showWeight}
+                onChange={handleWeight}
+              />
+            }
+            label="Display Card Weight"
+          />
           {/* <FormControlLabel
             control={
               <Switch color="primary" checked={isDark} onChange={handleTheme} />
             }
             label="Dark Theme"
           /> */}
+          <Typography component="h1" variant="caption" className={classes.sectionTitle}>Edit Mode</Typography>
+          <FormControlLabel
+            control={
+              <Switch
+                color="primary"
+                disabled={testing}
+                checked={autoAdvance}
+                onChange={handleAdvance}
+              />
+            }
+            label="Auto Advance"
+          />
         </Box>
       </DialogContent>
     </>

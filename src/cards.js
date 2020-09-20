@@ -28,7 +28,7 @@ const initialState = {
 
   repeat: false,
   reveal: false,
-  // edit: false,
+  autoAdvance: false, // controls whether to auto advance when editing cards
 
   mode: 'normal',
   // test: false, // if we are testing
@@ -86,7 +86,6 @@ const reducers = {
     // add current card to the history
     state.history = [ ...state.history, state.index ]
     state.testData.cardTimes = [...state.testData.cardTimes, Date.now()]
-    // TODO: last time is undefined. Fix this.
 
     // increase stepper and increment rng index
     state.stepper = state.stepper + 1;
@@ -196,7 +195,8 @@ const reducers = {
     // only modify changing fields
     state.data[index] = { ...state.data[index], ...newData };
 
-    // caseReducers.forward(state, action);
+    if (state.autoAdvance)
+      caseReducers.forward(state, action);
   },
 
   /* UTIL - functions called in more than one mode */
@@ -257,6 +257,11 @@ const reducers = {
     if (state.mode !== 'test') 
       state.repeat = payload;
   },
+  setAutoAdvance: (state, { payload }) => {
+    // can't change this during a test
+    if (state.mode !== 'test') 
+      state.autoAdvance = payload;
+  }
 };
 
 /* Selectors */
@@ -404,8 +409,8 @@ export const statSelector = createSelector(
 
 const { reducer, caseReducers, actions } = createSlice({
   name: "cards",
-  initialState: test1,
-  // initialState,
+  // initialState: test1,
+  initialState,
   reducers
 });
 
@@ -414,8 +419,8 @@ export const cardsReducer = persistReducer(
   {
     key: "cards",
     storage,
-    // whitelist: ["data", "range", "stepper"],
-    whitelist: ["data"],
+    whitelist: ["data", "range", "stepper", "autoAdvance"],
+    // whitelist: ["data"],
   },
   reducer
 );

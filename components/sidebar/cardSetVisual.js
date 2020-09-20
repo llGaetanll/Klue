@@ -117,9 +117,12 @@ const CardStats = () => {
   const numCards = useSelector(state => state.cards.range[1] - state.cards.range[0] + 1);
   const cardCount = useSelector(state => state.cards.data.length);
 
+  const showIndex = useSelector(state => state.settings.showIndex);
+  const showWeight = useSelector(state => state.settings.showWeight);
+
   return (
     <Box className={classes.bar}>
-      {index > -1 && (
+      {showIndex && index > -1 && (
         <>
           <Tooltip title="Card Number">
             <Typography className={classes.cardInfo}>{index + 1}</Typography>
@@ -130,10 +133,12 @@ const CardStats = () => {
       <Tooltip title="Card Range">
         <Typography className={classes.cardInfo}>{numCards}/{cardCount}</Typography>
       </Tooltip>
-      {weight && (
+      {showWeight && weight && (
         <>
           <Typography className={classes.cardInfo}>|</Typography>
-          <Typography className={classes.cardInfo}>{weight}</Typography>
+          <Tooltip title="Card Weight">
+            <Typography className={classes.cardInfo}>{weight}</Typography>
+          </Tooltip>
         </>
       )}
     </Box>

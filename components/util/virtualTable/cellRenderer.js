@@ -63,7 +63,7 @@ export const GraphRenderer = ({ cellData, ...props }) => {
     );
 
   return (
-    <Tooltip placement="top" title={`${weightDelta < 0 ? "" : "+"}${round(weightDelta, 3)} from ${round(prevWeight, 3)} (${round(weights.minWeight, 3)}, ${round(weights.maxWeight, 3)})`} arrow>
+    <Tooltip placement="top" title={`${weightDelta > 0 ? `+${round(weightDelta, 3)}` : `${round(weightDelta, 3)}`} from ${round(prevWeight, 3)}`} arrow>
       <TableCell
         component="div"
         className={clsx(tableClasses.tableCell, tableClasses.flexContainer)}

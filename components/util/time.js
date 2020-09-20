@@ -27,39 +27,39 @@ const Time = ({ time, className }) => {
   return (
     <Box display="flex">
       {h && (
-        <>
-          <Typography variant="h1" className={className || classes.time}>
-            {h}
-          </Typography>
-          <Typography variant="h1" className={className || classes.time}>
-            :
-          </Typography>
-        </>
+        <Typography variant="h1" className={className || classes.time}>
+          {h}
+        </Typography>
+      )}
+      {h && m && (
+        <Typography variant="h1" className={className || classes.time}>
+          :
+        </Typography>
       )}
       {m && (
-        <>
-          <Typography variant="h1" className={className || classes.time}>
-            {m}
-          </Typography>
-          <Typography variant="h1" className={className || classes.time}>
-            :
-          </Typography>
-        </>
+        <Typography variant="h1" className={className || classes.time}>
+          {m}
+        </Typography>
+      )}
+      {m && s && (
+        <Typography variant="h1" className={className || classes.time}>
+          :
+        </Typography>
       )}
       {s && (
         <Typography variant="h1" className={className || classes.time}>
           {s}
         </Typography>
       )}
+      {s && ms && (
+        <Typography variant="h1" className={className || classes.time}>
+          .
+        </Typography>
+      )}
       {ms && (
-        <>
-          <Typography variant="h1" className={className || classes.time}>
-            .
-          </Typography>
-          <Typography variant="h1" className={className || classes.time}>
-            {ms}
-          </Typography>
-        </>
+        <Typography variant="h1" className={className || classes.time}>
+          {ms}
+        </Typography>
       )}
       <Typography
         variant="h2"

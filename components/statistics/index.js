@@ -71,7 +71,7 @@ export const EndOfTest = () => {
           </HeaderStat>
           <HeaderStat title="Average Time">
             {className => (
-              <Time time={formatTime(round(avgTime / 1000, 3))} className={className} />
+              <Time time={formatTime(round(avgTime, 0))} className={className} />
             )}
           </HeaderStat>
           <HeaderStat
@@ -80,7 +80,7 @@ export const EndOfTest = () => {
           >
             {className => (
               <Typography component="h1" className={className}>
-                {avgWeightDelta < 0 ? "" : "+"} {round(avgWeightDelta, 3)}
+                {avgWeightDelta > 0 ? `+${round(avgWeightDelta, 3)}` : `${round(avgWeightDelta, 3)}`}
               </Typography>
             )}
           </HeaderStat>

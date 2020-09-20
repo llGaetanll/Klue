@@ -8,7 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 
-import { next, backward, forward, cardContent, testingSelector } from "../../src/cards";
+import { next, prev, forward, backward, cardContent, testingSelector } from "../../src/cards";
 
 const useStyles = makeStyles(theme => ({
   options: {
@@ -40,6 +40,7 @@ const Button = ({ children, onClick, ...props }) => {
 export const Options = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const ref = useRef();
 
   const cardIndex = useSelector(
     createSelector(
@@ -53,25 +54,35 @@ export const Options = () => {
   const history = useSelector(state => state.cards.history);
   const range = useSelector(state => state.cards.range);
 
+  // testing mode options
   const handleDiff = option =>
     dispatch(next(option));
+  const handlePrev = () => {
+    ref.current.blur(); // unfocus button after press
+    dispatch(prev());
+  };
 
-  const handlePrev = () => dispatch(backward());
-  const handleNext = () => dispatch(forward());
+  // edit mode options
+  const handleForward = () => 
+    dispatch(forward());
+  const handleBackward = () => 
+    dispatch(backward());
 
-  if (cardIndex < 0 || !test) return <></>;
+  if (cardIndex < 0 || !test)
+    return <></>;
 
   return (
     <Paper className={classes.options}>
       {!edit ? (
         <>
-          <IconButton
+          {/* <IconButton
+            ref={ref}
             disabled={history.length < 1}
             className={classes.option}
             onClick={handlePrev}
           >
             <ArrowBackIosIcon fontSize="small" />
-          </IconButton>
+          </IconButton> */}
           <Button
             disabled={cardIndex < range[0] || cardIndex > range[1]}
             className={classes.option}
@@ -96,10 +107,10 @@ export const Options = () => {
         </>
       ) : (
         <>
-          <IconButton className={classes.option} onClick={handlePrev}>
+          <IconButton className={classes.option} onClick={handleBackward}>
             <ArrowBackIosIcon fontSize="small" />
           </IconButton>
-          <IconButton className={classes.option} onClick={handleNext}>
+          <IconButton className={classes.option} onClick={handleForward}>
             <ArrowForwardIosIcon fontSize="small" />
           </IconButton>
         </>
