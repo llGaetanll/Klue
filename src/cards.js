@@ -1,6 +1,7 @@
 import {
   createSlice,
   createSelector,
+  current
 } from "@reduxjs/toolkit";
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 
@@ -13,11 +14,13 @@ import FileSaver from "file-saver";
 import seedrandom from "seedrandom";
 
 import theme from '../util/theme'
-import { formatDate, getDate } from "../util";
+import { formatDate, getDate, quadInterpolation } from "../util";
+
+import { test1 } from './test'; // test state to debug statistics
 
 const initialState = {
   data: [],
-  range: [],
+  range: [0, 1], // default range
   history: [], // history of all visited cards since the beginning of the test. null by default to disable history
 
   stepper: 0, // used to calculate rng card index
@@ -35,29 +38,6 @@ const initialState = {
   }
 };
 
-// const cardSetState = {
-  // cards: [],
-  // mode: 'normal',
-
-  // index: 0, // randomized by the stepper in testing mode, or incremented otherwise. This is the number that dictates what card the user sees, regardless of the mode
-  // reveal: false,
-  // test: {
-    // range: [],
-    // history: [], // history of all visited cards since the beginning of the test. null by default to disable history
-    // cardTimes: [], // timestamp of when one of the three card options has been clicked. the first timestamp is the start of the test, the last is the end.
-    // weightsPreTest: [], // so we can compare improvements after the end of the test
-
-    // repeat: false,
-    // stepper: 0, // used to calculate rng card index
-  // },
-  // edit: {
-
-  // },
-  // normal: {
-    
-  // }
-// }
-
 const reducers = {
   setMode: (state, { payload }) => {
     state.mode = payload;
@@ -68,9 +48,9 @@ const reducers = {
         // record pre-weights
         const cards = state.data.slice(state.range[0], state.range[1] + 1);
         state.testData.weightsPreTest = cards.map(card => card.weight); // keep only the weights
-
-        // clear cardTimes
-        state.testData.cardTimes = [];
+        
+        // clear cardTimes and record initial time
+        state.testData.cardTimes = [ Date.now() ];
 
         // clear history
         state.history = [];
@@ -78,14 +58,19 @@ const reducers = {
         // increase stepper and increment rng index
         state.stepper = state.stepper + 1;
         caseReducers.setIndex(state, {});
+
+        break;
       }
       // edit mode
       case "edit": {
         
+        break;
       }
       // normal mode
       default: {
+        state.index = 0; // reset index on normal mode
 
+        break;
       }
     }
   },
@@ -101,6 +86,7 @@ const reducers = {
     // add current card to the history
     state.history = [ ...state.history, state.index ]
     state.testData.cardTimes = [...state.testData.cardTimes, Date.now()]
+    // TODO: last time is undefined. Fix this.
 
     // increase stepper and increment rng index
     state.stepper = state.stepper + 1;
@@ -305,48 +291,17 @@ const createDeepSelector = createSelectorCreator(
   isEqual
 )
 
-// returns mapped data for the cardset visualization in the sidebar
-export const itemsSelector = createDeepSelector(
+// returns characters in the range
+export const characterSelector = createDeepSelector(
   [
-    state => state.cards.index,
-    // map through cards to prevent unnecessary rerenders on weight changes
-    state => state.cards.data.map(card => ({ meaning: card.meaning, notes: card.notes})), 
-    state => state.cards.range,
-    state => state.cards.history,
-    state => state.cards.edit
-  ],
-  (index, cards, range, history, edit) => {
-    if (edit)
-      return cards.map(({ meaning, notes }, i) => {
-        let itemState = "inactive";
-
-        if (meaning) {
-          itemState = "named";
-
-          if (notes) itemState = "filled";
-        }
-
-        if (i === index) itemState = "current";
-
-        return { itemState };
-      });
-
-    return cards.map((_, i) => {
-      let itemState = "inactive";
-
-      if (i >= range[0] && i <= range[1]) itemState = "active";
-
-      if (history.indexOf(i) > -1) itemState = "visited";
-
-      if (i === index) itemState = "current";
-
-      return { itemState };
-    });
-  }
+    state => state.cards.data.map(card => card.char),
+    state => state.cards.range
+  ], 
+  (characters, range) => characters.slice(range[0], range[1] + 1)
 );
 
 // find smallest and largest weight
-const weightSelector = createDeepSelector(
+export const weightSelector = createDeepSelector(
   state => state.cards.data.map(card => card.weight),
   (weights) => {
     let maxWeight = 0;
@@ -396,18 +351,21 @@ export const itemSelector = i => createDeepSelector(
 
         if (history.indexOf(i) > -1)
           color = theme.palette.success.dark
+        
+        // color the current node differently
+        if (i === index) 
+          color = theme.palette.info.main; 
 
         break;
       }
       default: {
+        const quad = quadInterpolation(weight, minWeight, maxWeight)
+
         if (i >= range[0] && i <= range[1])
-          color = interpolateLab(theme.palette.success.dark, theme.palette.error.dark)((weight - minWeight) / (maxWeight - minWeight))
+          color = interpolateLab(theme.palette.success.dark, theme.palette.error.dark)(quad);
       }
     }
     
-    // color the current node differently
-    if (i === index) 
-      color = theme.palette.info.main; 
 
     return color
   }
@@ -416,10 +374,13 @@ export const itemSelector = i => createDeepSelector(
 // returns statistics about the test that just concluded
 // TODO: since this is used at a particular time in the lifecylcle of the app, maybe a selector is not the best way to do it
 export const statSelector = createSelector(
-  state => state.cards.data.slice(state.cards.range[0], state.cards.range[1] + 1).map(cards => cards.weight),
-  state => state.cards.testData.weightsPreTest,
-  state => state.cards.testData.cardTimes,
-  (newCardWeights, oldCardWeights, cardTimeStamps) => {
+  [
+    state => state.cards.data.slice(state.cards.range[0], state.cards.range[1] + 1).map(cards => cards.weight),
+    state => state.cards.testData.weightsPreTest,
+    state => state.cards.testData.cardTimes,
+    state => state.cards.range[0],
+  ],
+  (newCardWeights, oldCardWeights, cardTimeStamps, startRange) => {
     const weightDeltas = newCardWeights.map((weight, i) => weight - oldCardWeights[i]); // calculate card improvement for each card
     const avgWeightDelta = weightDeltas.reduce((twd, wd) => twd + wd) / weightDeltas.length; // calculate average card improvement
 
@@ -429,6 +390,7 @@ export const statSelector = createSelector(
 
     return {
       cardStats: weightDeltas.map((wd, i) => ({
+        index: startRange + i,
         weightDelta: wd,
         prevWeight: oldCardWeights[i],
         time: cardTimes[i]
@@ -442,7 +404,8 @@ export const statSelector = createSelector(
 
 const { reducer, caseReducers, actions } = createSlice({
   name: "cards",
-  initialState,
+  initialState: test1,
+  // initialState,
   reducers
 });
 
@@ -451,7 +414,8 @@ export const cardsReducer = persistReducer(
   {
     key: "cards",
     storage,
-    blacklist: ["reveal", "edit", "history", "mode", "index", "testData"]
+    // whitelist: ["data", "range", "stepper"],
+    whitelist: ["data"],
   },
   reducer
 );

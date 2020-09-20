@@ -231,9 +231,6 @@ export const Card = () => {
           animate={animationState}
           style={{ width: "100%", height: "100%" }}
         >
-          <Typography variant="caption" className={classes.index}>
-            {index + 1}
-          </Typography>
           <motion.div
             variants={{
               quiz: {

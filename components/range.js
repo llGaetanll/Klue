@@ -13,7 +13,7 @@ import {
 } from "@material-ui/core";
 
 import UpdateIcon from "@material-ui/icons/Update";
-import CloseIcon from "@material-ui/icons/Close";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -173,10 +173,10 @@ const Range = () => {
             <Button
               color="primary"
               onClick={handleNormal}
-              startIcon={<CloseIcon />}
+              startIcon={<ArrowBackIcon />}
               style={{ whiteSpace: 'nowrap' }}
             >
-              Cancel Test
+              Back
             </Button>
           </span>
         </Tooltip>
