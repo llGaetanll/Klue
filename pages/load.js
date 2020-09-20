@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import PublishIcon from "@material-ui/icons/Publish";
 
-import UploadButton from "../components/uploadButton";
+import UploadButton from "../components/util/uploadButton";
 
 const useStyles = makeStyles(theme => ({
   load: {

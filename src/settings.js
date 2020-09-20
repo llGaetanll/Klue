@@ -1,3 +1,6 @@
+import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+
 import { createSlice, createSelector } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -11,7 +14,9 @@ const initialState = {
     SET_EDIT: "e",
     HIDE: "esc"
   },
-  theme: "dark"
+  theme: "dark",
+  showWeight: false,
+  showIndex: false
 };
 
 const reducers = {
@@ -19,7 +24,13 @@ const reducers = {
     const theme = state.theme;
 
     state.theme = theme === "light" ? "dark" : "light";
-  }
+  },
+  toggleWeight: (state, _) => {
+    state.showWeight = !state.showWeight
+  },
+  toggleIndex: (state, _) => {
+    state.showIndex = !state.showIndex
+  },
 };
 
 // in case we decice to add more theme variants in the future, a selector is good
@@ -28,11 +39,19 @@ export const darkSelector = createSelector(
   theme => theme === "dark"
 );
 
-const { reducer: settingsReducer, actions } = createSlice({
+const { reducer, actions } = createSlice({
   name: "settings",
   initialState,
   reducers
 });
+
+export const settingsReducer = persistReducer(
+  {
+    key: "settings",
+    storage
+  },
+  reducer
+);
 
 module.exports = {
   ...module.exports,

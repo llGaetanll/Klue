@@ -9,19 +9,22 @@ import {
   Typography,
   Card as MuiCard,
   CardContent,
-  TextField
+  TextField,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 
-import { testAgain, updCard, setEdit, cardContent } from "../../src/cards";
+import { EndOfTest } from '../statistics'
+
+import { setMode, updCard, cardContent, testingSelector, editSelector } from "../../src/cards";
 
 const useStyles = makeStyles(theme => ({
   card: {
     width: 300,
-    height: 400,
+    minHeight: 400,
 
-    display: "flex"
+    display: "flex",
+    userSelect: 'none'
   },
   content: {
     display: "block",
@@ -58,7 +61,7 @@ const ModifyCard = () => {
     notes: ""
   });
 
-  const { meaning = "", notes = "", index, weight } = useSelector(cardContent);
+  const { meaning = "", notes = "", index } = useSelector(cardContent);
 
   // update fields when index or field changes
   useEffect(() => setMeaning(meaning), [meaning, index]);
@@ -73,7 +76,7 @@ const ModifyCard = () => {
   const handleCommitChanges = () =>
     dispatch(updCard({ index, newData: cardState }));
 
-  const handleCancel = () => dispatch(setEdit(false));
+  const handleCancel = () => dispatch(setMode("normal"));
 
   useEffect(() => {
     inputRef.current.focus();
@@ -82,7 +85,6 @@ const ModifyCard = () => {
   return (
     <Box
       display="flex"
-      alignItems="center"
       justifyContent="center"
       flexDirection="column"
     >
@@ -103,7 +105,7 @@ const ModifyCard = () => {
         rows={4}
         multiline
       />
-      <Box display="flex">
+      <Box display="flex" justifyContent="center">
         <Button onClick={handleCancel}>Cancel</Button>
         <Button
           color="primary"
@@ -153,13 +155,14 @@ const CardInfo = () => {
         </Typography>
       )}
       {notes && (
-        <Typography variant="p" className={classes.notes}>
+        <Typography className={classes.notes}>
           {notes}
         </Typography>
       )}
     </Box>
   );
 };
+
 
 export const Card = () => {
   const classes = useStyles();
@@ -181,7 +184,15 @@ export const Card = () => {
     )
   );
 
-  const edit = useSelector(state => state.cards.edit);
+  const weight = useSelector(
+    createSelector(
+      cardContent,
+      content => content.weight
+    )
+  );
+
+  const test = useSelector(testingSelector);
+  const edit = useSelector(editSelector);
   const reveal = useSelector(state => state.cards.reveal);
 
   // update animation state
@@ -199,17 +210,9 @@ export const Card = () => {
     setAnimationState("quiz");
   }, [edit, reveal]);
 
-  const handleTestAgain = () => dispatch(testAgain());
-
-  if (index < 0)
-    return (
-      <Box display="flex" flexDirection="column">
-        <Typography variant="h3">All Set!</Typography>
-        <Button color="primary" onClick={handleTestAgain}>
-          Test Again
-        </Button>
-      </Box>
-    );
+  if (index < 0) {
+    return <EndOfTest />
+  }
 
   return (
     <MuiCard className={classes.card}>
@@ -218,9 +221,6 @@ export const Card = () => {
           animate={animationState}
           style={{ width: "100%", height: "100%" }}
         >
-          <Typography variant="caption" className={classes.index}>
-            {index + 1}
-          </Typography>
           <motion.div
             variants={{
               quiz: {
