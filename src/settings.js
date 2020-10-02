@@ -10,7 +10,7 @@ const initialState = {
     EASY: "1",
     MEDIUM: "2",
     HARD: "3",
-    TOGGLE_REVEAL: "space",
+    TOGGLE_REVEAL: "r",
     SET_EDIT: "e",
     HIDE: "esc"
   },

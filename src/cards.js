@@ -83,6 +83,9 @@ const reducers = {
 
     caseReducers.setWeight(state, { payload });
 
+    // reset reveal
+    state.reveal = false;
+
     // add current card to the history
     state.history = [ ...state.history, state.index ]
     state.testData.cardTimes = [...state.testData.cardTimes, Date.now()]

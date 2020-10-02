@@ -75,7 +75,7 @@ const Item = ({ index }) => {
   const dispatch = useDispatch();
 
   const color = useSelector(itemSelector(index));
-  const classes = useStyles({ color });
+  // const classes = useStyles({ color });
 
   const test = useSelector(testingSelector);
   const selected = useSelector(state => state.cards.index === index);
@@ -90,7 +90,7 @@ const Item = ({ index }) => {
       animate={selected ? "selected" : "def"}
       variants={variants}
       onClick={handleSetCard}
-      className={classes.dot}
+      // className={classes.dot}
     />
   )
 };

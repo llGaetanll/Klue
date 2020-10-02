@@ -8,7 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 
-import { next, prev, forward, backward, cardContent, testingSelector } from "../../src/cards";
+import { next, prev, forward, backward, cardContent, testingSelector, editSelector } from "../../src/cards";
 
 const useStyles = makeStyles(theme => ({
   options: {
@@ -50,7 +50,7 @@ export const Options = () => {
   );
 
   const test = useSelector(testingSelector);
-  const edit = useSelector(state => state.cards.edit);
+  const edit = useSelector(editSelector);
   const history = useSelector(state => state.cards.history);
   const range = useSelector(state => state.cards.range);
 
@@ -68,11 +68,12 @@ export const Options = () => {
   const handleBackward = () => 
     dispatch(backward());
 
-  if (cardIndex < 0 || !test)
+  if (!test)
     return <></>;
 
   return (
     <Paper className={classes.options}>
+      lkjsdflksdflkj
       {!edit ? (
         <>
           {/* <IconButton

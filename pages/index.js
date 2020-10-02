@@ -27,10 +27,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const Index = props => {
+const Index = () => {
   const classes = useStyles();
 
   const cards = useSelector(state => state.cards.data);
+  const index = useSelector(state => state.cards.index);
 
   if (cards.length < 1) return <Load />;
 
@@ -39,10 +40,14 @@ const Index = props => {
       <KeyBinds />
       <Box className={classes.content}>
         <Sidebar />
-        <Box className={classes.card}>
-          <Card />
-          <Options />
-        </Box>
+        {index > -1 ? (
+          <Box className={classes.card}>
+            <Card />
+            <Options />
+          </Box>
+        ) : (
+          <EndOfTest />
+        )}
       </Box>
       <HorizontalBar />
     </Box>
