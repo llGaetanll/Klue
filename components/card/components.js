@@ -58,7 +58,7 @@ const useFieldStyles = makeStyles(theme => ({
 }));
 
 // text field component
-const TextField = ({ display, edit, value, setValue, ...props }) => {
+export const TextField = ({ display, edit, value, setValue, ...props }) => {
   const classes = useFieldStyles(); // default styles for every field
   const inputRef = useRef();
 

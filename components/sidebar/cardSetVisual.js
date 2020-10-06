@@ -27,19 +27,19 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     paddingTop: 0
   },
-  dot: ({ color }) => ({
-    display: "inline-block",
-    float: "left",
-    width: 5,
-    height: 5,
+  // dot: ({ color }) => ({
+    // display: "inline-block",
+    // float: "left",
+    // width: 5,
+    // height: 5,
 
-    borderRadius: "50%",
-    marginRight: 7,
-    marginBottom: 7,
+    // borderRadius: "50%",
+    // marginRight: 7,
+    // marginBottom: 7,
 
-    backgroundColor: color,
-    cursor: 'pointer'
-  }),
+    // backgroundColor: color,
+    // cursor: 'pointer'
+  // }),
   bar: {
     display: 'flex',
 
@@ -59,6 +59,7 @@ const useStyles = makeStyles(theme => ({
   })
 }));
 
+// control the size of the dot based on if it's selected or not
 const variants = {
   selected: {
     scale: 1.5
@@ -70,12 +71,23 @@ const variants = {
     scale: 0
   }
 }
+const DOT_STYLES = {
+  display: 'inline-block',
+  float: 'left',
+  width: 5,
+  height: 5,
+
+  borderRadius: '50%',
+  marginRight: 7,
+  marginBottom: 7,
+
+  cursor: 'pointer',
+};
 
 const Item = ({ index }) => {
   const dispatch = useDispatch();
 
   const color = useSelector(itemSelector(index));
-  // const classes = useStyles({ color });
 
   const test = useSelector(testingSelector);
   const selected = useSelector(state => state.cards.index === index);
@@ -90,7 +102,7 @@ const Item = ({ index }) => {
       animate={selected ? "selected" : "def"}
       variants={variants}
       onClick={handleSetCard}
-      // className={classes.dot}
+      style={{ ...DOT_STYLES, backgroundColor: color }}
     />
   )
 };

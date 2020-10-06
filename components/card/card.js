@@ -1,5 +1,5 @@
+import { useState, useEffect } from 'react'
 import { useSelector } from "react-redux";
-import { createSelector } from "@reduxjs/toolkit";
 import { makeStyles } from '@material-ui/core/styles'
 
 import {
@@ -8,7 +8,7 @@ import {
   CardContent,
 } from "@material-ui/core";
 
-import { Character, CardInfo } from './components';
+import { TextField } from './components';
 import { cardContent, editSelector } from "../../src/cards";
 
 const useStyles = makeStyles(theme => ({
