@@ -27,19 +27,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     paddingTop: 0
   },
-  // dot: ({ color }) => ({
-    // display: "inline-block",
-    // float: "left",
-    // width: 5,
-    // height: 5,
-
-    // borderRadius: "50%",
-    // marginRight: 7,
-    // marginBottom: 7,
-
-    // backgroundColor: color,
-    // cursor: 'pointer'
-  // }),
   bar: {
     display: 'flex',
 
@@ -71,6 +58,7 @@ const variants = {
     scale: 0
   }
 }
+
 const DOT_STYLES = {
   display: 'inline-block',
   float: 'left',
@@ -84,24 +72,19 @@ const DOT_STYLES = {
   cursor: 'pointer',
 };
 
-const Item = ({ index }) => {
-  const dispatch = useDispatch();
+const Item = ({ index, handleClick }) => {
 
+  // color of the dot
   const color = useSelector(itemSelector(index));
 
-  const test = useSelector(testingSelector);
+  // if the dot is selected, its variant changes
   const selected = useSelector(state => state.cards.index === index);
-
-  const handleSetCard = () => {
-    if (!test)
-      dispatch(setIndex(index));
-  };
 
   return (
     <motion.div 
       animate={selected ? "selected" : "def"}
       variants={variants}
-      onClick={handleSetCard}
+      onClick={() => handleClick(index)}
       style={{ ...DOT_STYLES, backgroundColor: color }}
     />
   )
@@ -109,13 +92,22 @@ const Item = ({ index }) => {
 
 const Dots = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const length = useSelector(state => state.cards.data.length);
+  const test = useSelector(testingSelector);
+
+  // when the user clicks on the dot, the index is 
+  // drilled up and setIndex is conditionally dispatched
+  const handleClick = index => {
+    if (!test)
+      dispatch(setIndex(index));
+  }
 
   return useMemo(() => (
     <Box className={classes.dots}>
       {Array.from({ length }).map((_, i) => (
-        <Item index={i} />
+        <Item index={i} key={`dot-${i}`} handleClick={handleClick} />
       ))}
     </Box>
   ), [length])
