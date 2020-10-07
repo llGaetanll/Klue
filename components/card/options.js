@@ -73,7 +73,6 @@ export const Options = () => {
 
   return (
     <Paper className={classes.options}>
-      lkjsdflksdflkj
       {!edit ? (
         <>
           {/* <IconButton

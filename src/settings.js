@@ -12,7 +12,7 @@ const initialState = {
     HARD: "3",
     TOGGLE_REVEAL: "r",
     SET_EDIT: "e",
-    HIDE: "esc"
+    ESC: "esc"
   },
   theme: "dark",
   showWeight: false,

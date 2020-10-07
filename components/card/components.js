@@ -1,16 +1,11 @@
-import { useState, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { createSelector } from "@reduxjs/toolkit";
+import { useEffect, useRef } from "react";
 
 import {
   Box,
-  Button,
   Typography,
   TextField as MuiTextField,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-
-import { cardContent, editSelector } from "../../src/cards";
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -48,7 +43,29 @@ const useStyles = makeStyles(theme => ({
     flex: 2,
     justifyContent: "center",
     flexDirection: "column"
-  }
+  },
+
+  component: {
+    display: 'flex',
+
+    // display actions menu on hover
+    '&:hover $action': {
+      opacity: 1
+    },
+
+    minHeight: 48,
+    alignItems: 'center'
+  },
+  action: {
+    opacity: 0,
+
+    position: 'absolute',
+    transform: 'translateX(-100%)',
+
+    "&:hover": {
+      backgroundColor: "transparent"
+    }
+  },
 }));
 
 const useFieldStyles = makeStyles(theme => ({
@@ -93,54 +110,5 @@ export const TextField = ({ display, edit, value, setValue, ...props }) => {
     <Typography className={classes.textField} {...textFieldProps}>
       {value}
     </Typography>
-  );
-}
-
-export const CardInfo = () => {
-  const classes = useStyles();
-  const [cardState, setCardState] = useState({});
-
-  const { meaning, notes, index } = useSelector(cardContent);
-
-  // update fields when index or field changes
-  useEffect(() => setMeaning(meaning), [meaning, index]);
-  useEffect(() => setNotes(notes), [notes, index]);
-
-  const setMeaning = m => setCardState(s => ({ ...s, meaning: m }));
-  const setNotes = n => setCardState(s => ({ ...s, notes: n }));
-
-  const reveal = useSelector(state => state.cards.reveal);
-  const edit = useSelector(editSelector);
-
-  return (
-    <Box className={classes.cardInfo}>
-      <TextField 
-        display={meaning && reveal}
-        edit={edit}
-        value={cardState.meaning}
-        setValue={setMeaning}
-        textFieldProps={{
-          variant: "h4",
-          component: "h1"
-        }}
-        inputProps={{
-          label: "Meaning",
-          variant: "outlined",
-          focus: true
-        }}
-      />
-      <TextField 
-        display={notes && reveal}
-        edit={edit}
-        value={cardState.notes}
-        setValue={setNotes}
-        inputProps={{
-          variant: "outlined",
-          label: "Notes",
-          rows: 4,
-          multiline: true
-        }}
-      />
-    </Box>
   );
 }

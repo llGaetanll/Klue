@@ -5,6 +5,7 @@ import { Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { Sidebar } from "../components/sidebar";
+import { EndOfTest } from "../components/statistics";
 import { HorizontalBar } from "../components/horizontalbar";
 import { Card, Options } from "../components/card";
 import { Main as KeyBinds } from "../components/util/keybinds";
@@ -40,14 +41,13 @@ const Index = () => {
       <KeyBinds />
       <Box className={classes.content}>
         <Sidebar />
-        {index > -1 ? (
-          <Box className={classes.card}>
+        <Box flex={2} display="flex" alignItems="center" justifyContent="center">
+          {index > -1 ? (
             <Card />
-            <Options />
-          </Box>
-        ) : (
-          <EndOfTest />
-        )}
+          ) : (
+            <EndOfTest />
+          )}
+        </Box>
       </Box>
       <HorizontalBar />
     </Box>

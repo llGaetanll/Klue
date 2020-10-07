@@ -31,7 +31,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
 
-    padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`
+    padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+  },
+  wrapper: {
+    overflow: 'auto'
   },
   mode: {
     paddingRight: theme.spacing(2),
@@ -63,70 +66,72 @@ export const HorizontalBar = () => {
     dispatch(setMode("normal"));
 
   return (
-    <Box className={classes.horizontalbar}>
-      <Typography variant="h5" className={classes.mode}>{mode.toUpperCase()}</Typography>
-      {!edit && (<Range />)}
+    <Box className={classes.wrapper}>
+      <Box className={classes.horizontalbar}>
+        <Typography variant="h5" className={classes.mode}>{mode.toUpperCase()}</Typography>
+        {!edit && (<Range />)}
 
-      <Box display="flex" flex={1} />
+        <Box display="flex" flex={1} />
 
-      {edit && (
-        <Tooltip title="Back to Normal Mode">
-          <span>
-            <Button
-              color="primary"
-              onClick={handleNormal}
-              startIcon={<ArrowBackIcon />}
-              style={{ whiteSpace: 'nowrap' }}
-            >
-              Back
-            </Button>
-          </span>
-        </Tooltip>
-      )}
+        {edit && (
+          <Tooltip title="Back to Normal Mode">
+            <span>
+              <Button
+                color="primary"
+                onClick={handleNormal}
+                startIcon={<ArrowBackIcon />}
+                style={{ whiteSpace: 'nowrap' }}
+              >
+                Back
+              </Button>
+            </span>
+          </Tooltip>
+        )}
 
-      {normal && (
-        <Tooltip title="Edit Mode">
-          <span>
-            <IconButton
-              color="primary"
-              onClick={handleEdit}
-              style={{ whiteSpace: 'nowrap' }}
-            >
-              <EditIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-      )}
+        {normal && (
+          <Tooltip title="Edit Mode">
+            <span>
+              <IconButton
+                color="primary"
+                onClick={handleEdit}
+                style={{ whiteSpace: 'nowrap' }}
+              >
+                <EditIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
+        )}
 
-      <Divider orientation="vertical" variant="middle" />
+        <Divider orientation="vertical" variant="middle" />
 
-      <Tooltip title="Download Cards">
-        <IconButton
-          color="primary"
-          className={classes.button}
-          onClick={handleDownload}
-        >
-          <GetAppIcon />
-        </IconButton>
-      </Tooltip>
-
-      <UploadButton>
-        <Tooltip title="Upload Cards">
-          <IconButton color="primary" component="span">
-            <PublishIcon />
+        <Tooltip title="Download Cards">
+          <IconButton
+            color="primary"
+            className={classes.button}
+            onClick={handleDownload}
+          >
+            <GetAppIcon />
           </IconButton>
         </Tooltip>
-      </UploadButton>
 
-      <Tooltip title="Settings">
-        <IconButton
-          color="primary"
-          className={classes.button}
-          onClick={handleSettings}
-        >
-          <SettingsIcon />
-        </IconButton>
-      </Tooltip>
+        <UploadButton>
+          <Tooltip title="Upload Cards">
+            <IconButton color="primary" component="span">
+              <PublishIcon />
+            </IconButton>
+          </Tooltip>
+        </UploadButton>
+
+        <Tooltip title="Settings">
+          <IconButton
+            color="primary"
+            className={classes.button}
+            onClick={handleSettings}
+          >
+            <SettingsIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
     </Box>
   );
 }

@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import {
   Typography,
+  Box,
   Card as MuiCard,
   CardContent,
 } from "@material-ui/core";
@@ -65,36 +66,40 @@ export const Card = () => {
   return (
     <MuiCard className={classes.card}>
       <CardContent className={classes.content}>
-        <Typography className={classes.character} variant="h1">
-          {character}
-        </Typography>
-        <TextField 
-          display={meaning && reveal}
-          edit={edit}
-          value={cardState.meaning}
-          setValue={setMeaning}
-          textFieldProps={{
-            variant: "h4",
-            component: "h1"
-          }}
-          inputProps={{
-            label: "Meaning",
-            variant: "outlined",
-            focus: true
-          }}
-        />
-        <TextField 
-          display={notes && reveal}
-          edit={edit}
-          value={cardState.notes}
-          setValue={setNotes}
-          inputProps={{
-            variant: "outlined",
-            label: "Notes",
-            rows: 4,
-            multiline: true
-          }}
-        />
+        <Box flex={1} className={classes.content}>
+          <Typography className={classes.character} variant="h1">
+            {character}
+          </Typography>
+        </Box>
+        <Box flex={2} className={classes.content}>
+          <TextField 
+            display={meaning && reveal}
+            edit={edit}
+            value={cardState.meaning}
+            setValue={setMeaning}
+            textFieldProps={{
+              variant: "h4",
+              component: "h1"
+            }}
+            inputProps={{
+              label: "Meaning",
+              variant: "outlined",
+              focus: true
+            }}
+          />
+          <TextField 
+            display={notes && reveal}
+            edit={edit}
+            value={cardState.notes}
+            setValue={setNotes}
+            inputProps={{
+              variant: "outlined",
+              label: "Notes",
+              rows: 4,
+              multiline: true
+            }}
+          />
+        </Box>
       </CardContent>
     </MuiCard>
   );

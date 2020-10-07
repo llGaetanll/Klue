@@ -31,7 +31,8 @@ const initialState = {
   autoAdvance: false, // controls whether to auto advance when editing cards
 
   mode: 'normal',
-  // test: false, // if we are testing
+  prevMode: null,
+
   testData: {
     cardTimes: [], // timestamp of when one of the three card options has been clicked. the first timestamp is the start of the test, the last is the end.
     weightsPreTest: [] // so we can compare improvements after the end of the test
@@ -40,6 +41,7 @@ const initialState = {
 
 const reducers = {
   setMode: (state, { payload }) => {
+    state.prevMode = state.mode;
     state.mode = payload;
 
     switch (payload) {
@@ -73,6 +75,15 @@ const reducers = {
         break;
       }
     }
+  },
+  // brings you back to the previous mode that you were in
+  revertMode: (state, _) => {
+    state.mode = state.prevMode;
+    state.prevMode = null;
+
+    // increase stepper and increment rng index
+    state.stepper = state.stepper + 1;
+    caseReducers.setIndex(state, {});
   },
 
   /* NORMAL */

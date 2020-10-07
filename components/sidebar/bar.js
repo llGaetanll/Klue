@@ -31,7 +31,6 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     display: "flex",
     flexDirection: "column",
-
   },
 }));
 
