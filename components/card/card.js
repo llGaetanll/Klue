@@ -67,13 +67,15 @@ export const Card = () => {
     <MuiCard className={classes.card}>
       <CardContent className={classes.content}>
         <Box flex={1} className={classes.content}>
-          <Typography className={classes.character} variant="h1">
-            {character}
-          </Typography>
+          {reveal && (
+            <Typography className={classes.character} variant="h1">
+              {character}
+            </Typography>
+          )}
         </Box>
         <Box flex={2} className={classes.content}>
           <TextField 
-            display={meaning && reveal}
+            display={meaning}
             edit={edit}
             value={cardState.meaning}
             setValue={setMeaning}
