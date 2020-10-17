@@ -1,7 +1,7 @@
-import { useContext } from "react";
+import { useState, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import Measure from "react-measure";
 
-import { motion } from "framer-motion";
 import {
   Box,
   Paper,
@@ -13,7 +13,8 @@ import {
   Button,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  Divider
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -28,6 +29,7 @@ import {
   setRepeat,
   getCards,
   itemsSelector,
+  setDisplayWeights,
   setIndex
 } from "../../../src/cards";
 import { toggleTheme, darkSelector } from "../../../src/settings";
@@ -36,7 +38,7 @@ import { FeedbackContext } from "../../../util/feedback";
 
 const useStyles = makeStyles(theme => ({
   sidebar: {
-    flex: 1,
+    width: 500,
     display: "flex",
     flexDirection: "column",
 
@@ -84,15 +86,27 @@ const Item = ({ index, itemState }) => {
   return <Paper className={classes.dot} onClick={handleSetCard} />;
 };
 
+const useSettingsStyles = makeStyles(theme => ({
+  button: {
+    marginTop: theme.spacing(1),
+    width: "100%"
+  }
+}));
+
 const Settings = props => {
   const dispatch = useDispatch();
+  const classes = useSettingsStyles();
 
-  const repeatCards = useSelector(state => state.cards.repeat);
   const isDark = useSelector(darkSelector);
 
-  const handleRepeat = () => dispatch(setRepeat(!repeatCards));
-
   const handleTheme = () => dispatch(toggleTheme());
+
+  const handleDownload = () => dispatch(getCards());
+
+  // const handleUpload = event => {
+  //   event.preventDefault();
+  //   setDialog(<UploadWarning />);
+  // };
 
   return (
     <>
@@ -101,20 +115,34 @@ const Settings = props => {
         <Box display="flex" flexDirection="column">
           <FormControlLabel
             control={
-              <Switch
-                color="primary"
-                checked={repeatCards}
-                onChange={handleRepeat}
-              />
-            }
-            label="Repeat Cards"
-          />
-          <FormControlLabel
-            control={
               <Switch color="primary" checked={isDark} onChange={handleTheme} />
             }
             label="Dark Theme"
           />
+
+          <Divider />
+
+          <Button
+            color="primary"
+            className={classes.button}
+            onClick={handleDownload}
+            startIcon={<GetAppIcon />}
+            variant="outlined"
+          >
+            Download Cards
+          </Button>
+
+          <UploadButton>
+            <Button
+              color="primary"
+              component="span"
+              className={classes.button}
+              startIcon={<PublishIcon />}
+              variant="outlined"
+            >
+              Upload Cards
+            </Button>
+          </UploadButton>
         </Box>
       </DialogContent>
     </>
@@ -149,70 +177,89 @@ const UploadWarning = ({ onClose }) => {
   );
 };
 
-const ButtonBar = () => {
-  const classes = useStyles();
+const Options = () => {
   const dispatch = useDispatch();
+  const classes = useStyles();
 
   const { setDialog } = useContext(FeedbackContext);
 
-  const handleDownload = () => dispatch(getCards());
-
   const handleSettings = () => setDialog(<Settings />);
 
-  // const handleUpload = event => {
-  //   event.preventDefault();
-  //   setDialog(<UploadWarning />);
-  // };
+  const repeatCards = useSelector(state => state.cards.repeat);
+  const handleRepeat = () => dispatch(setRepeat(!repeatCards));
+
+  const displayWeights = useSelector(state => state.cards.displayWeights);
+  const handleDisplayWeights = () =>
+    dispatch(setDisplayWeights(!displayWeights));
 
   return (
-    <Box display="flex">
-      <Range />
-
-      <Tooltip title="Download Cards">
-        <IconButton
-          color="primary"
-          className={classes.button}
-          onClick={handleDownload}
-        >
-          <GetAppIcon />
-        </IconButton>
-      </Tooltip>
-
-      <UploadButton>
-        <Tooltip title="Upload Cards">
-          <IconButton color="primary" component="span">
-            <PublishIcon />
+    <Box display="flex" flexDirection="column">
+      <Box display="flex">
+        <Range />
+        <Tooltip title="Settings">
+          <IconButton
+            color="primary"
+            className={classes.button}
+            onClick={handleSettings}
+          >
+            <SettingsIcon />
           </IconButton>
         </Tooltip>
-      </UploadButton>
-
-      <Tooltip title="Settings">
-        <IconButton
-          color="primary"
-          className={classes.button}
-          onClick={handleSettings}
-        >
-          <SettingsIcon />
-        </IconButton>
-      </Tooltip>
+      </Box>
+      <Box display="flex">
+        <FormControlLabel
+          control={
+            <Switch
+              color="primary"
+              checked={repeatCards}
+              onChange={handleRepeat}
+            />
+          }
+          label="Repeat Cards"
+        />
+        <FormControlLabel
+          control={
+            <Switch
+              color="primary"
+              checked={displayWeights}
+              onChange={handleDisplayWeights}
+            />
+          }
+          label="Display Weights"
+        />
+      </Box>
     </Box>
+  );
+};
+
+export const VisualSet = props => {
+  const items = useSelector(itemsSelector);
+
+  const [size, setSize] = useState({ width: 0, height: 0 });
+
+  const classes = useStyles({ size }); // dynamically resize dots on different viewports
+
+  return (
+    <Measure bounds onResize={({ bounds }) => setSize(bounds)}>
+      {({ measureRef }) => (
+        <Box ref={measureRef} flex={1} className={classes.dots}>
+          {items.map((color, i) => (
+            <Item index={i} {...color} />
+          ))}
+        </Box>
+      )}
+    </Measure>
   );
 };
 
 export const Sidebar = () => {
   const classes = useStyles();
 
-  const items = useSelector(itemsSelector);
-
   return (
     <Box className={classes.sidebar}>
-      <ButtonBar />
+      <Options />
 
-      <Box className={classes.dots}>
-        {items.map((props, i) => (
-          <Item index={i} {...props} />
-        ))}
-      </Box>
+      <VisualSet />
     </Box>
   );
 };

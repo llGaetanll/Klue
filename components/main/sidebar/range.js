@@ -21,15 +21,14 @@ const useStyles = makeStyles(theme => ({
   range: {
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
-
-    margin: `0 -${theme.spacing(2)}px`
+    alignItems: "center"
   },
   slider: {
-    width: 200
+    width: 200,
+    margin: `0 ${theme.spacing(2)}px`
   },
   input: {
-    margin: `0 ${theme.spacing(2)}px`,
+    // margin: `0 ${theme.spacing(2)}px`,
     padding: `0 ${theme.spacing(1)}px`,
 
     maxWidth: 70
@@ -73,6 +72,7 @@ const SliderInput = ({ value, setValue, ...props }) => {
         value={valueState}
         onChange={handleChange}
         type="number"
+        {...props}
       />
     </Paper>
   );
@@ -84,6 +84,7 @@ const Range = () => {
   const dispatch = useDispatch();
 
   const range = useSelector(state => state.cards.range);
+  const editMode = useSelector(state => state.cards.edit);
   const cardsLength = useSelector(cardCountSelector);
 
   // range state is always 1 more than the actual range (to prevent index 0 instead of 1 in UI)
@@ -108,12 +109,13 @@ const Range = () => {
     dispatch(setRange([rangeState[0] - 1, rangeState[1] - 1]));
 
   return (
-    <>
+    <Box display="flex">
       <Box className={classes.range}>
         <SliderInput
           length={cardsLength}
           value={rangeState[0]}
           setValue={setLo}
+          disabled={editMode}
         />
         <Slider
           value={rangeState}
@@ -122,12 +124,14 @@ const Range = () => {
           onChange={handleSetRange}
           valueLabelDisplay="off"
           className={classes.slider}
+          disabled={editMode}
         />
 
         <SliderInput
           length={cardsLength}
           value={rangeState[1]}
           setValue={setHi}
+          disabled={editMode}
         />
       </Box>
       <Tooltip title="Update Range">
@@ -136,14 +140,15 @@ const Range = () => {
             color="primary"
             onClick={handleCommitRange}
             disabled={
-              rangeState[0] - 1 === range[0] && rangeState[1] - 1 === range[1]
+              editMode ||
+              (rangeState[0] - 1 === range[0] && rangeState[1] - 1 === range[1])
             }
           >
             <UpdateIcon />
           </IconButton>
         </span>
       </Tooltip>
-    </>
+    </Box>
   );
 };
 

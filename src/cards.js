@@ -11,6 +11,7 @@ import storage from "redux-persist/lib/storage";
 
 import FileSaver from "file-saver";
 import seedrandom from "seedrandom";
+import d3 from "d3-interpolate";
 
 import { formatDate, getDate } from "../util";
 
@@ -25,7 +26,8 @@ const initialState = {
   repeat: false,
   test: false, // if the card set is for a test
   reveal: false,
-  edit: false
+  edit: false,
+  displayWeights: false
 };
 
 const reducers = {
@@ -87,8 +89,9 @@ const reducers = {
     // set cards
     state.data = cards;
 
-    // update range
-    caseReducers.setRange(state, { payload: [0, cards.length - 1] });
+    // update range if we're in testing mode
+    if (!state.edit)
+      caseReducers.setRange(state, { payload: [0, cards.length - 1] });
   },
   getCards: (state, _) => {
     const cardsBlob = new Blob([JSON.stringify(state.data)], {
@@ -202,6 +205,11 @@ const reducers = {
   setRepeat: (state, { payload }) => {
     state.repeat = payload;
   },
+  setDisplayWeights: (state, { payload }) => {
+    if (state.edit) return;
+
+    state.displayWeights = payload;
+  },
   addHistory: (state, { payload }) => {
     // if payload is outside of range, ignore
     if (payload < state.range[0] || payload > state.range[1]) return;
@@ -255,7 +263,9 @@ export const itemsSelector = createSelector(
   state => state.cards.range,
   state => state.cards.history,
   state => state.cards.edit,
-  (index, cards, range, history, edit) => {
+  state => state.cards.displayWeights,
+  (index, cards, range, history, edit, displayWeights) => {
+    // edit mode
     if (edit)
       return cards.map(({ meaning, notes }, i) => {
         let itemState = "inactive";
@@ -270,6 +280,12 @@ export const itemsSelector = createSelector(
 
         return { itemState };
       });
+
+    // display card weights
+    if (displayWeights)
+      return cards.map(({ weight }) => ({
+        weight
+      }));
 
     return cards.map((_, i) => {
       let itemState = "inactive";
