@@ -1,23 +1,22 @@
 import dynamic from "next/dynamic";
 import { useSelector } from "react-redux";
-import { createSelector } from "@reduxjs/toolkit";
 
-import { Box, Typography } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { Sidebar } from "../components/main/sidebar";
-import { Card, Bar, Options } from "../components/main";
-import { Main as KeyBinds } from "../components/keybinds";
-
-import { cardContent } from "../src/cards";
+import Sidebar from "../components/sidebar/index";
+import { EndOfTest } from "../components/statistics";
+import { HorizontalBar } from "../components/horizontalbar";
+import { Card, Options } from "../components/card";
+import { Main as KeyBinds } from "../components/util/keybinds";
 
 const Load = dynamic(() => import("./load"));
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   content: {
     display: "flex",
     flexDirection: "row",
-    flex: 1
+    flex: 1,
   },
   card: {
     display: "flex",
@@ -25,18 +24,15 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center",
     justifyContent: "center",
 
-    flex: 2
+    flex: 2,
   },
-  icon: {
-    flexGrow: 0
-  }
 }));
 
-const Index = props => {
+const Index = () => {
   const classes = useStyles();
 
-  const cards = useSelector(state => state.cards.data);
-  const test = useSelector(state => state.cards.test);
+  const cards = useSelector((state) => state.cards.data);
+  const index = useSelector((state) => state.cards.index);
 
   if (cards.length < 1) return <Load />;
 
@@ -45,11 +41,16 @@ const Index = props => {
       <KeyBinds />
       <Box className={classes.content}>
         <Sidebar />
-        <Box className={classes.card}>
-          <Card />
-          <Options />
+        <Box
+          flex={2}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          {index > -1 ? <Card /> : <EndOfTest />}
         </Box>
       </Box>
+      <HorizontalBar />
     </Box>
   );
 };

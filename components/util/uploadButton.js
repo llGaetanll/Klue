@@ -1,12 +1,10 @@
 import { useContext } from "react";
+import { useDispatch } from 'react-redux';
+
 import { makeStyles } from "@material-ui/core/styles";
 
-import { IconButton, Tooltip } from "@material-ui/core";
-import PublishIcon from "@material-ui/icons/Publish";
-
-import { FeedbackContext } from "../util/feedback";
-import store from "../store";
-import { setCards } from "../src/cards";
+import { FeedbackContext } from "../../util/feedback";
+import { setCards } from "../../src/cards";
 
 const useStyles = makeStyles(theme => ({
   input: {
@@ -19,6 +17,7 @@ const useStyles = makeStyles(theme => ({
 
 const UploadButton = ({ children }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const { addAlert } = useContext(FeedbackContext);
 
@@ -31,7 +30,7 @@ const UploadButton = ({ children }) => {
       // contents of file in variable
       var text = e.target.result;
 
-      store.dispatch(setCards(JSON.parse(text)));
+      dispatch(setCards(JSON.parse(text)));
       addAlert("Successfully loaded cards", "success");
     });
 
