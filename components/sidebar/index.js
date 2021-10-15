@@ -10,7 +10,7 @@ import { itemSelector, testingSelector, setIndex } from "../../src/cards";
 const useStyles = makeStyles((theme) => ({
   dots: {
     // flex: 1,
-    width: 500, // TODO: width should use @media tags
+    width: 550, // TODO: width should use @media tags
     display: "block",
 
     marginRight: -3,

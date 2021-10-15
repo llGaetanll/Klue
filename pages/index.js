@@ -47,7 +47,14 @@ const Index = () => {
           alignItems="center"
           justifyContent="center"
         >
-          {index > -1 ? <Card /> : <EndOfTest />}
+          {index > -1 ? (
+            <Box display="flex" flexDirection="column">
+              <Card />
+              <Options />
+            </Box>
+          ) : (
+            <EndOfTest />
+          )}
         </Box>
       </Box>
       <HorizontalBar />
