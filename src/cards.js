@@ -8,12 +8,11 @@ import { interpolateLab } from "d3-interpolate";
 import { isEqual } from "lodash";
 import FileSaver from "file-saver";
 import seedrandom from "seedrandom";
-import d3 from "d3-interpolate";
 
 import theme from "../util/theme";
 import { formatDate, getDate, quadInterpolation } from "../util";
 
-import { test1 } from "./test"; // test state to debug statistics
+import { test1 } from "../tests/1"; // test state to debug statistics
 
 const initialState = {
   data: [],

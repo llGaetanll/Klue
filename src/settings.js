@@ -3,6 +3,7 @@ import storage from "redux-persist/lib/storage";
 
 import { createSlice, createSelector } from "@reduxjs/toolkit";
 
+// list of keyboard shortcuts
 const initialState = {
   keybinds: {
     FORWARD: "right",
@@ -12,11 +13,11 @@ const initialState = {
     HARD: "3",
     TOGGLE_REVEAL: "r",
     SET_EDIT: "e",
-    ESC: "esc"
+    ESC: "esc",
   },
   theme: "dark",
   showWeight: false,
-  showIndex: false
+  showIndex: false,
 };
 
 const reducers = {
@@ -26,29 +27,29 @@ const reducers = {
     state.theme = theme === "light" ? "dark" : "light";
   },
   toggleWeight: (state, _) => {
-    state.showWeight = !state.showWeight
+    state.showWeight = !state.showWeight;
   },
   toggleIndex: (state, _) => {
-    state.showIndex = !state.showIndex
+    state.showIndex = !state.showIndex;
   },
 };
 
 // in case we decice to add more theme variants in the future, a selector is good
 export const darkSelector = createSelector(
-  [state => state.settings.theme],
-  theme => theme === "dark"
+  [(state) => state.settings.theme],
+  (theme) => theme === "dark"
 );
 
 const { reducer, actions } = createSlice({
   name: "settings",
   initialState,
-  reducers
+  reducers,
 });
 
 export const settingsReducer = persistReducer(
   {
     key: "settings",
-    storage
+    storage,
   },
   reducer
 );
@@ -56,5 +57,5 @@ export const settingsReducer = persistReducer(
 module.exports = {
   ...module.exports,
   settingsReducer,
-  ...actions
+  ...actions,
 };

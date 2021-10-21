@@ -12,7 +12,7 @@ import { Main as KeyBinds } from "../components/util/keybinds";
 
 const Load = dynamic(() => import("./load"));
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
   content: {
     display: "flex",
     flexDirection: "row",
@@ -26,15 +26,19 @@ const useStyles = makeStyles((theme) => ({
 
     flex: 2,
   },
-}));
+});
 
 const Index = () => {
   const classes = useStyles();
 
   const cards = useSelector((state) => state.cards.data);
-  const index = useSelector((state) => state.cards.index);
 
   if (cards.length < 1) return <Load />;
+
+  const index = useSelector((state) => state.cards.index);
+
+  // mode is used to determine the state of the program
+  const mode = useSelector((state) => state.cards.mode);
 
   return (
     <Box display="flex" flex={1} flexDirection="column">

@@ -7,7 +7,11 @@ import {
   Typography,
   Button,
   IconButton,
-  Divider,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Divider as MuiDivider,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -15,7 +19,9 @@ import GetAppIcon from "@material-ui/icons/GetApp";
 import PublishIcon from "@material-ui/icons/Publish";
 import SettingsIcon from "@material-ui/icons/Settings";
 import EditIcon from "@material-ui/icons/Edit";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import SaveIcon from "@material-ui/icons/Save";
+import DoneAllIcon from "@material-ui/icons/DoneAll";
+import CancelIcon from "@material-ui/icons/Close";
 
 import UploadButton from "../util/uploadButton";
 
@@ -35,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
   horizontalbar: {
     display: "flex",
     alignItems: "center",
+    height: 64,
 
     padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
   },
@@ -48,41 +55,112 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 800,
     fontSize: 20,
   },
+  divider: {
+    margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
+  },
 }));
 
-export const HorizontalBar = () => {
+const Divider = () => {
   const classes = useStyles();
-  const mode = useSelector((state) => state.cards.mode);
 
-  if (mode === "normal")
-    return (
-      <Box className={classes.wrapper}>
-        <NormalBar />
-      </Box>
-    );
+  return (
+    <MuiDivider
+      className={classes.divider}
+      orientation="vertical"
+      variant="middle"
+      flexItem
+    />
+  );
+};
 
-  if (mode === "edit")
-    return (
-      <Box className={classes.wrapper}>
-        <EditBar />
-      </Box>
-    );
-  if (mode === "test")
-    return (
-      <Box className={classes.wrapper}>
-        <TestBar />
-      </Box>
-    );
+// Additional buttons in the bottom bar
+// Upload, Download, Settings...
+const Misc = () => {
+  const classes = useStyles();
+  const { setDialog } = useContext(FeedbackContext);
+
+  const handleDownload = () => dispatch(getCards());
+  const handleSettings = () => setDialog(<Settings />);
+
+  return (
+    <>
+      <Tooltip title="Download Cards">
+        <IconButton
+          color="primary"
+          className={classes.button}
+          onClick={handleDownload}
+        >
+          <GetAppIcon />
+        </IconButton>
+      </Tooltip>
+
+      <UploadButton>
+        <Tooltip title="Upload Cards">
+          <IconButton color="primary" component="span">
+            <PublishIcon />
+          </IconButton>
+        </Tooltip>
+      </UploadButton>
+
+      <Tooltip title="Settings">
+        <IconButton
+          color="primary"
+          className={classes.button}
+          onClick={handleSettings}
+        >
+          <SettingsIcon />
+        </IconButton>
+      </Tooltip>
+    </>
+  );
+};
+
+const NormalBar = () => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const handleEdit = () => dispatch(setMode("edit"));
+  const handleTest = () => dispatch(setMode("test"));
+
+  return (
+    <Box className={classes.horizontalbar}>
+      <Typography variant="h5" className={classes.mode}>
+        NORMAL
+      </Typography>
+
+      <Divider />
+
+      <Button
+        color="primary"
+        onClick={handleEdit}
+        startIcon={<EditIcon />}
+        style={{ whiteSpace: "nowrap" }}
+      >
+        Edit
+      </Button>
+
+      <Button
+        color="primary"
+        onClick={handleTest}
+        startIcon={<DoneAllIcon />}
+        style={{ whiteSpace: "nowrap" }}
+      >
+        Test
+      </Button>
+
+      <Range />
+
+      <Divider />
+
+      <Misc />
+    </Box>
+  );
 };
 
 const EditBar = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const { setDialog } = useContext(FeedbackContext);
-
-  const handleDownload = () => dispatch(getCards());
-  const handleSettings = () => setDialog(<Settings />);
   const handleNormal = () => dispatch(setMode("normal"));
 
   return (
@@ -91,116 +169,38 @@ const EditBar = () => {
         EDIT
       </Typography>
 
-      {/*<Box display="flex" flex={1} />*/}
+      <Divider />
 
-      <Tooltip title="Back to Normal Mode">
-        <span>
-          <Button
-            color="primary"
-            onClick={handleNormal}
-            startIcon={<ArrowBackIcon />}
-            style={{ whiteSpace: "nowrap" }}
-          >
-            Back
-          </Button>
-        </span>
-      </Tooltip>
+      <Button
+        color="primary"
+        onClick={handleNormal}
+        startIcon={<SaveIcon />}
+        style={{ whiteSpace: "nowrap" }}
+      >
+        Save
+      </Button>
 
-      <Divider orientation="vertical" variant="middle" />
+      <Box flex={1} />
 
-      <Tooltip title="Download Cards">
-        <IconButton
-          color="primary"
-          className={classes.button}
-          onClick={handleDownload}
-        >
-          <GetAppIcon />
-        </IconButton>
-      </Tooltip>
-
-      <UploadButton>
-        <Tooltip title="Upload Cards">
-          <IconButton color="primary" component="span">
-            <PublishIcon />
-          </IconButton>
-        </Tooltip>
-      </UploadButton>
-
-      <Tooltip title="Settings">
-        <IconButton
-          color="primary"
-          className={classes.button}
-          onClick={handleSettings}
-        >
-          <SettingsIcon />
-        </IconButton>
-      </Tooltip>
+      <Misc />
     </Box>
   );
 };
 
-const NormalBar = () => {
-  const classes = useStyles();
-  const dispatch = useDispatch();
-
-  const { setDialog } = useContext(FeedbackContext);
-
-  const handleEdit = () => dispatch(setMode("edit"));
-  const handleDownload = () => dispatch(getCards());
-  const handleSettings = () => setDialog(<Settings />);
-
+const CancelTest = ({ onClose }) => {
   return (
-    <Box className={classes.horizontalbar}>
-      <Typography variant="h5" className={classes.mode}>
-        NORMAL
-      </Typography>
-
-      <Range />
-
-      {/* <Box display="flex" flex={1} /> */}
-
-      <Tooltip title="Edit Mode">
-        <span>
-          <IconButton
-            color="primary"
-            onClick={handleEdit}
-            style={{ whiteSpace: "nowrap" }}
-          >
-            <EditIcon />
-          </IconButton>
-        </span>
-      </Tooltip>
-
-      <Divider orientation="vertical" variant="middle" />
-
-      <Tooltip title="Download Cards">
-        <IconButton
-          color="primary"
-          className={classes.button}
-          onClick={handleDownload}
-        >
-          <GetAppIcon />
-        </IconButton>
-      </Tooltip>
-
-      <UploadButton>
-        <Tooltip title="Upload Cards">
-          <IconButton color="primary" component="span">
-            <PublishIcon />
-          </IconButton>
-        </Tooltip>
-      </UploadButton>
-
-      <Tooltip title="Settings">
-        <IconButton
-          color="primary"
-          className={classes.button}
-          onClick={handleSettings}
-        >
-          <SettingsIcon />
-        </IconButton>
-      </Tooltip>
-    </Box>
+    <>
+      <DialogTitle>Exit Test?</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Exiting this test will nullify its results.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => onClose(false)}>Cancel</Button>
+        <Button onClick={() => onClose(true)}>Exit</Button>
+      </DialogActions>
+    </>
   );
 };
 
@@ -210,45 +210,44 @@ const TestBar = () => {
 
   const { setDialog } = useContext(FeedbackContext);
 
-  const handleDownload = () => dispatch(getCards());
-  const handleSettings = () => setDialog(<Settings />);
+  const handleNormal = () => dispatch(setMode("normal"));
+  const handleCancel = () =>
+    setDialog(<CancelTest />, (exit) => (exit ? handleNormal() : null));
 
   return (
     <Box className={classes.horizontalbar}>
       <Typography variant="h5" className={classes.mode}>
         TEST
       </Typography>
-      <Range />
 
-      <Divider orientation="vertical" variant="middle" />
+      <Divider />
 
-      <Tooltip title="Download Cards">
-        <IconButton
-          color="primary"
-          className={classes.button}
-          onClick={handleDownload}
-        >
-          <GetAppIcon />
-        </IconButton>
-      </Tooltip>
-
-      <UploadButton>
-        <Tooltip title="Upload Cards">
-          <IconButton color="primary" component="span">
-            <PublishIcon />
-          </IconButton>
-        </Tooltip>
-      </UploadButton>
-
-      <Tooltip title="Settings">
-        <IconButton
-          color="primary"
-          className={classes.button}
-          onClick={handleSettings}
-        >
-          <SettingsIcon />
-        </IconButton>
-      </Tooltip>
+      <Button
+        color="primary"
+        onClick={handleCancel}
+        startIcon={<CancelIcon />}
+        style={{ whiteSpace: "nowrap" }}
+      >
+        Cancel
+      </Button>
     </Box>
   );
+};
+
+// bar type depends on mode
+const BAR = {
+  normal: <NormalBar />,
+  edit: <EditBar />,
+  test: <TestBar />,
+};
+
+// the bar changes depending on the state of the program. It is responsible for
+// itself.
+export const HorizontalBar = () => {
+  const classes = useStyles();
+  const mode = useSelector((state) => state.cards.mode);
+
+  const bar = BAR[mode];
+
+  return <Box className={classes.wrapper}>{bar}</Box>;
 };

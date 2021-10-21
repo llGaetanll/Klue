@@ -129,11 +129,8 @@ const Range = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const normal = useSelector(normalSelector);
-  const testing = useSelector(testingSelector);
-
+  const testing = useSelector(testingSelector); // slider disabled in edit mode
   const range = useSelector((state) => state.cards.range);
-  const editMode = useSelector((state) => state.cards.edit);
   const cardsLength = useSelector(cardCountSelector);
 
   // range state is always 1 more than the actual range (to prevent index 0 instead of 1 in UI)
@@ -164,55 +161,21 @@ const Range = () => {
     dispatch(setRange([rangeState[0] - 1, rangeState[1] - 1]));
   };
 
-  const handleNormal = () => dispatch(setMode("normal"));
-
-  const handleTest = () => {
-    handleCommitRange(); // update range before testing
-    dispatch(setMode("test"));
-  };
-
   return (
     <>
-      {testing && (
-        <Tooltip title="Back to Normal Mode">
-          <span>
-            <Button
-              color="primary"
-              onClick={handleNormal}
-              startIcon={<ArrowBackIcon />}
-              style={{ whiteSpace: "nowrap" }}
-            >
-              Back
-            </Button>
-          </span>
-        </Tooltip>
-      )}
-      {normal && (
-        <>
-          <Button
+      <Tooltip title="Update Range">
+        <span>
+          <IconButton
             color="primary"
-            onClick={handleTest}
-            startIcon={<DoneAllIcon />}
-            style={{ whiteSpace: "nowrap" }}
+            onClick={handleCommitRange}
+            disabled={
+              rangeState[0] - 1 === range[0] && rangeState[1] - 1 === range[1]
+            }
           >
-            Start Test
-          </Button>
-          <Tooltip title="Update Range">
-            <span>
-              <IconButton
-                color="primary"
-                onClick={handleCommitRange}
-                disabled={
-                  rangeState[0] - 1 === range[0] &&
-                  rangeState[1] - 1 === range[1]
-                }
-              >
-                <UpdateIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-        </>
-      )}
+            <UpdateIcon />
+          </IconButton>
+        </span>
+      </Tooltip>
       <Box className={classes.range}>
         <SliderInput
           length={cardsLength}
