@@ -1,5 +1,6 @@
 import { createSlice, createSelector, current } from "@reduxjs/toolkit";
 import { createSelectorCreator, defaultMemoize } from "reselect";
+import { useSelector } from "react-redux";
 
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
@@ -11,8 +12,6 @@ import seedrandom from "seedrandom";
 
 import theme from "../util/theme";
 import { formatDate, getDate, quadInterpolation } from "../util";
-
-import { test1 } from "../tests/1"; // test state to debug statistics
 
 const initialState = {
   data: [],
@@ -303,17 +302,32 @@ export const cardContent = createSelector(
   }
 );
 
+{
+  /* return whether the app in is test mode */
+}
 export const testingSelector = createSelector(
   (state) => state.cards.mode,
   (mode) => mode === "test"
 );
+
 export const editSelector = createSelector(
   (state) => state.cards.mode,
   (mode) => mode === "edit"
 );
+
 export const normalSelector = createSelector(
   (state) => state.cards.mode,
   (mode) => mode === "normal"
+);
+
+export const testDoneSelector = createSelector(
+  (state) => state.cards.index,
+  (index) => {
+    // a test is all done iff we are in test mode AND index is -1
+    const test = useSelector(testingSelector);
+
+    return test && index === -1;
+  }
 );
 
 // create a "selector creator" that uses lodash.isEqual instead of ===
@@ -346,7 +360,7 @@ export const weightSelector = createDeepSelector(
 );
 
 // returns mapped data for the cardset visualization in the sidebar
-export const itemSelector = (i) =>
+export const colorSelector = (i) =>
   createDeepSelector(
     [
       (state) => state.cards.index,

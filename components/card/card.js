@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// actual card component
 export const Card = () => {
   const classes = useStyles();
   const [cardState, setCardState] = useState({});

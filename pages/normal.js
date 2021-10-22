@@ -1,13 +1,14 @@
 import { Box } from "@material-ui/core";
 
-import Sidebar from "../components/sidebar/index";
+import { Card } from "../components/card";
 
 // what the page looks like in normal mode
-export default () => (
+const Normal = () => (
   <>
-    <Sidebar />
     <Box flex={2} display="flex" alignItems="center" justifyContent="center">
       <Card />
     </Box>
   </>
 );
+
+export default Normal;

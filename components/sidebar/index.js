@@ -1,11 +1,11 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { motion, useCycle } from "framer-motion";
+import { motion } from "framer-motion";
 
-import { Box, Typography, IconButton, Tooltip } from "@material-ui/core";
+import { Box, Typography, Tooltip } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { itemSelector, testingSelector, setIndex } from "../../src/cards";
+import { colorSelector, testingSelector, setIndex } from "../../src/cards";
 
 const useStyles = makeStyles((theme) => ({
   dots: {
@@ -62,9 +62,10 @@ const DOT_STYLES = {
   cursor: "pointer",
 };
 
+// the actual dot component
 const Item = ({ index, handleClick }) => {
   // color of the dot
-  const color = useSelector(itemSelector(index));
+  const color = useSelector(colorSelector(index));
 
   // if the dot is selected, its variant changes
   const selected = useSelector((state) => state.cards.index === index);
@@ -79,6 +80,7 @@ const Item = ({ index, handleClick }) => {
   );
 };
 
+// dot grid. only rerenders when cardset size changes
 const Dots = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -104,8 +106,38 @@ const Dots = () => {
   );
 };
 
+const useStatStyles = makeStyles((theme) => ({
+  bar: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  section: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+
+    margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+  },
+  number: {
+    fontSize: "1.8em",
+    fontFamily: "monospace",
+    color: theme.palette.grey[700],
+
+    marginRight: theme.spacing(1),
+  },
+  key: {
+    textTransform: "uppercase",
+    fontWeight: "bold",
+    color: theme.palette.grey[700],
+
+    marginRight: theme.spacing(1),
+  },
+  value: {},
+}));
+
+// appears above dot grid
 const CardStats = () => {
-  const classes = useStyles();
+  const classes = useStatStyles();
 
   const index = useSelector((state) => state.cards.index);
   const weight = useSelector((state) => state.cards.data[index]?.weight);
@@ -117,28 +149,32 @@ const CardStats = () => {
   const showIndex = useSelector((state) => state.settings.showIndex);
   const showWeight = useSelector((state) => state.settings.showWeight);
 
+  // color is shown as the weight of the card
+  const color = useSelector(colorSelector(index));
+
   return (
     <Box className={classes.bar}>
       {showIndex && index > -1 && (
-        <>
-          <Tooltip title="Card Number">
-            <Typography className={classes.cardInfo}>{index + 1}</Typography>
-          </Tooltip>
-          <Typography className={classes.cardInfo}>•</Typography>
-        </>
+        <Box className={classes.section}>
+          <Typography className={classes.number}>#</Typography>
+          <Typography className={classes.value}>{index + 1}</Typography>
+        </Box>
       )}
-      <Tooltip title="Card Range">
-        <Typography className={classes.cardInfo}>
+      <Box className={classes.section}>
+        <Typography className={classes.key}>Range</Typography>
+        <Typography className={classes.value}>
           {numCards}/{cardCount}
         </Typography>
-      </Tooltip>
+      </Box>
       {showWeight && weight && (
-        <>
-          <Typography className={classes.cardInfo}>|</Typography>
-          <Tooltip title="Card Weight">
-            <Typography className={classes.cardInfo}>{weight}</Typography>
+        <Box className={classes.section}>
+          <Typography className={classes.key}>Weight</Typography>
+          <Tooltip title={weight}>
+            <Typography className={classes.value} style={{ color }}>
+              {weight.toFixed(3)}
+            </Typography>
           </Tooltip>
-        </>
+        </Box>
       )}
     </Box>
   );

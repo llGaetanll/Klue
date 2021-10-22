@@ -1,13 +1,14 @@
 import { Box } from "@material-ui/core";
 
-import Sidebar from "../components/sidebar/index";
+import { Card } from "../components/card";
 
 // what the page looks like in edit mode
-export default () => (
+const Edit = () => (
   <>
-    <Sidebar />
     <Box flex={2} display="flex" alignItems="center" justifyContent="center">
       <Card />
     </Box>
   </>
 );
+
+export default Edit;

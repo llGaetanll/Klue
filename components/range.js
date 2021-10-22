@@ -84,47 +84,7 @@ const SliderInput = ({ value, setValue, length, ...props }) => {
   );
 };
 
-const ModeSwitch = () => {
-  const dispatch = useDispatch();
-
-  const mode = useSelector((state) => state.cards.mode);
-
-  const handleNormal = () => dispatch(setMode("normal"));
-
-  const handleTest = () => {
-    dispatch(setMode("test"));
-  };
-
-  switch (mode) {
-    case "test":
-      return (
-        <Tooltip title="Back to Normal Mode">
-          <span>
-            <Button
-              color="primary"
-              onClick={handleNormal}
-              startIcon={<CloseIcon />}
-              style={{ whiteSpace: "nowrap" }}
-            >
-              Cancel Test
-            </Button>
-          </span>
-        </Tooltip>
-      );
-    case "normal":
-      return (
-        <Button
-          color="primary"
-          onClick={handleTest}
-          startIcon={<DoneAllIcon />}
-          style={{ whiteSpace: "nowrap" }}
-        >
-          Start Test
-        </Button>
-      );
-  }
-};
-
+// card range slider that can be seen on the right side of the screen
 const Range = () => {
   const classes = useStyles();
   const dispatch = useDispatch();

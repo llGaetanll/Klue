@@ -5,10 +5,14 @@ import { Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 import Sidebar from "../components/sidebar/index";
-import { EndOfTest } from "../components/statistics";
 import { HorizontalBar } from "../components/horizontalbar";
-import { Card, Options } from "../components/card";
 import { Main as KeyBinds } from "../components/util/keybinds";
+
+// main content of the page
+// depends on the mode (normal, edit, etc...)
+import NormalContent from "./normal";
+import EditContent from "./edit";
+import TestContent from "./test";
 
 const Load = dynamic(() => import("./load"));
 
@@ -28,6 +32,13 @@ const useStyles = makeStyles({
   },
 });
 
+// content of the page depends on app mode
+const CONTENT = {
+  normal: <NormalContent />,
+  edit: <EditContent />,
+  test: <TestContent />,
+};
+
 const Index = () => {
   const classes = useStyles();
 
@@ -35,31 +46,16 @@ const Index = () => {
 
   if (cards.length < 1) return <Load />;
 
-  const index = useSelector((state) => state.cards.index);
-
   // mode is used to determine the state of the program
   const mode = useSelector((state) => state.cards.mode);
+  const content = CONTENT[mode];
 
   return (
     <Box display="flex" flex={1} flexDirection="column">
       <KeyBinds />
       <Box className={classes.content}>
         <Sidebar />
-        <Box
-          flex={2}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          {index > -1 ? (
-            <Box display="flex" flexDirection="column">
-              <Card />
-              <Options />
-            </Box>
-          ) : (
-            <EndOfTest />
-          )}
-        </Box>
+        {content}
       </Box>
       <HorizontalBar />
     </Box>
