@@ -24,7 +24,7 @@
     "react": "16.11.0",
     "react-dom": "16.11.0",
     "react-hotkeys": "^2.0.0",
-    "react-measure": "^2.3.0",
+    "react-measure": "^2.5.0",
     "react-number-format": "^4.4.1",
     "react-redux": "^7.2.1",
     "react-virtualized": "^9.22.2",

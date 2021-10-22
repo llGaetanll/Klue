@@ -18,30 +18,34 @@ import DoneAllIcon from "@material-ui/icons/DoneAll";
 
 import { makeStyles } from "@material-ui/core/styles";
 
-import { setMode, setRange, testingSelector, normalSelector } from "../src/cards";
+import {
+  setMode,
+  setRange,
+  testingSelector,
+  normalSelector,
+} from "../src/cards";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   range: {
     display: "flex",
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-
-    // margin: `0 -${theme.spacing(2)}px`
   },
   slider: {
-    width: 1000
+    width: "100%",
+    margin: `0 ${theme.spacing(2)}px`,
   },
   input: {
-    margin: `0 ${theme.spacing(2)}px`,
     padding: `0 ${theme.spacing(1)}px`,
 
-    maxWidth: 70
-  }
+    maxWidth: 70,
+  },
 }));
 
 const cardCountSelector = createSelector(
-  state => state.cards.data,
-  cards => cards.length
+  (state) => state.cards.data,
+  (cards) => cards.length
 );
 
 const SliderInput = ({ value, setValue, length, ...props }) => {
@@ -52,7 +56,7 @@ const SliderInput = ({ value, setValue, length, ...props }) => {
   // update state on value change
   useEffect(() => setValueState(value), [value]);
 
-  const handleChange = event => {
+  const handleChange = (event) => {
     const value = Number(event.target.value);
 
     if (value > cardsLength) return;
@@ -69,7 +73,7 @@ const SliderInput = ({ value, setValue, length, ...props }) => {
         className={classes.inputBase}
         inputProps={{
           min: 1,
-          max: length
+          max: length,
         }}
         value={valueState}
         onChange={handleChange}
@@ -80,56 +84,13 @@ const SliderInput = ({ value, setValue, length, ...props }) => {
   );
 };
 
-const ModeSwitch = () => {
-  const dispatch = useDispatch();
-
-  const mode = useSelector(state => state.cards.mode)
-
-  const handleNormal = () =>
-    dispatch(setMode("normal"));
-
-  const handleTest = () => {
-    dispatch(setMode("test"))
-  }
-
-  switch (mode) {
-    case "test":
-      return (
-        <Tooltip title="Back to Normal Mode">
-          <span>
-            <Button
-              color="primary"
-              onClick={handleNormal}
-              startIcon={<CloseIcon />}
-              style={{ whiteSpace: 'nowrap' }}
-            >
-              Cancel Test
-            </Button>
-          </span>
-        </Tooltip>
-      )
-    case "normal": 
-      return (
-        <Button
-          color="primary"
-          onClick={handleTest}
-          startIcon={<DoneAllIcon />}
-          style={{ whiteSpace: 'nowrap' }}
-        >
-          Start Test
-        </Button>
-      )
-  }
-}
-
+// card range slider that can be seen on the right side of the screen
 const Range = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const normal = useSelector(normalSelector);
-  const testing = useSelector(testingSelector);
-
-  const range = useSelector(state => state.cards.range);
+  const testing = useSelector(testingSelector); // slider disabled in edit mode
+  const range = useSelector((state) => state.cards.range);
   const cardsLength = useSelector(cardCountSelector);
 
   // range state is always 1 more than the actual range (to prevent index 0 instead of 1 in UI)
@@ -142,8 +103,10 @@ const Range = () => {
 
   // when using manual inputs, its possible to have a range where
   // the first value is > than the second. setLo and setHi fix this
-  const setLo = lo => setRangeState(r => (lo < r[1] ? [lo, r[1]] : [r[1], lo]));
-  const setHi = hi => setRangeState(r => (r[0] < hi ? [r[0], hi] : [hi, r[0]]));
+  const setLo = (lo) =>
+    setRangeState((r) => (lo < r[1] ? [lo, r[1]] : [r[1], lo]));
+  const setHi = (hi) =>
+    setRangeState((r) => (r[0] < hi ? [r[0], hi] : [hi, r[0]]));
 
   // modify local range state
   const handleSetRange = (_, newValue) => setRangeState(newValue);
@@ -154,64 +117,30 @@ const Range = () => {
     // if the range hasn't changed, ignore
     if (rangeState[0] - 1 === range[0] && rangeState[1] - 1 === range[1])
       return;
-    
-    dispatch(setRange([rangeState[0] - 1, rangeState[1] - 1]))
-  }
 
-  const handleNormal = () =>
-    dispatch(setMode("normal"));
-
-  const handleTest = () => {
-    handleCommitRange(); // update range before testing
-    dispatch(setMode("test"))
-  }
+    dispatch(setRange([rangeState[0] - 1, rangeState[1] - 1]));
+  };
 
   return (
-    <>{testing && (
-        <Tooltip title="Back to Normal Mode">
-          <span>
-            <Button
-              color="primary"
-              onClick={handleNormal}
-              startIcon={<ArrowBackIcon />}
-              style={{ whiteSpace: 'nowrap' }}
-            >
-              Back
-            </Button>
-          </span>
-        </Tooltip>
-      )}
-      {normal && (
-      <>
-        <Button
-          color="primary"
-          onClick={handleTest}
-          startIcon={<DoneAllIcon />}
-          style={{ whiteSpace: 'nowrap' }}
-        >
-          Start Test
-        </Button>
-        <Tooltip title="Update Range">
-          <span>
-            <IconButton
-              color="primary"
-              onClick={handleCommitRange}
-              disabled={
-                rangeState[0] - 1 === range[0] && rangeState[1] - 1 === range[1]
-              }
-            >
-              <UpdateIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-      </>
-      )}
+    <>
+      <Tooltip title="Update Range">
+        <span>
+          <IconButton
+            color="primary"
+            onClick={handleCommitRange}
+            disabled={
+              rangeState[0] - 1 === range[0] && rangeState[1] - 1 === range[1]
+            }
+          >
+            <UpdateIcon />
+          </IconButton>
+        </span>
+      </Tooltip>
       <Box className={classes.range}>
         <SliderInput
           length={cardsLength}
           value={rangeState[0]}
           setValue={setLo}
-
           disabled={testing}
         />
         <Slider
@@ -221,7 +150,6 @@ const Range = () => {
           onChange={handleSetRange}
           valueLabelDisplay="off"
           className={classes.slider}
-
           disabled={testing}
         />
 
@@ -229,7 +157,6 @@ const Range = () => {
           length={cardsLength}
           value={rangeState[1]}
           setValue={setHi}
-
           disabled={testing}
         />
       </Box>

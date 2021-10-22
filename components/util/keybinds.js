@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { createSelector } from "@reduxjs/toolkit";
+// import { createSelector } from "@reduxjs/toolkit";
 
 import { GlobalHotKeys } from "react-hotkeys";
 
@@ -9,8 +9,8 @@ import {
   backward,
   setReveal,
   setMode,
+  revertMode,
   next,
-  cardContent,
   editSelector
 } from "../../src/cards";
 
@@ -27,19 +27,22 @@ export const Main = ({ children }) => {
   };
 
   const handlers = {
-    FORWARD: useCallback(() => {
-      if (edit) dispatch(forward());
-    }, [reveal]),
+    FORWARD: () => dispatch(forward()),
     BACKWARD: () => dispatch(backward()),
+
     EASY: () => handleDiff("easy"),
     MEDIUM: () => handleDiff("medium"),
     HARD: () => handleDiff("hard"),
+
     TOGGLE_REVEAL: useCallback(() => dispatch(setReveal(!reveal)), [reveal]),
-    SET_EDIT: useCallback(() => {
+    SET_EDIT: useCallback((event) => {
+      event.preventDefault();
       if (!edit) dispatch(setMode("edit"));
     }, [edit]),
-    HIDE: useCallback(() => {
-      if (edit) dispatch(setMode("normal"));
+
+    ESC: useCallback(() => {
+      // if (edit) dispatch(setMode("normal"));
+      if (edit) dispatch(revertMode());
       if (reveal) dispatch(setReveal(false));
     })
   };

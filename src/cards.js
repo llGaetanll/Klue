@@ -1,22 +1,17 @@
-import {
-  createSlice,
-  createSelector,
-  current
-} from "@reduxjs/toolkit";
-import { createSelectorCreator, defaultMemoize } from 'reselect';
+import { createSlice, createSelector, current } from "@reduxjs/toolkit";
+import { createSelectorCreator, defaultMemoize } from "reselect";
+import { useSelector } from "react-redux";
 
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-import { interpolateLab } from 'd3-interpolate'
-import { isEqual } from 'lodash'
+import { interpolateLab } from "d3-interpolate";
+import { isEqual } from "lodash";
 import FileSaver from "file-saver";
 import seedrandom from "seedrandom";
 
-import theme from '../util/theme'
+import theme from "../util/theme";
 import { formatDate, getDate, quadInterpolation } from "../util";
-
-import { test1 } from './test'; // test state to debug statistics
 
 const initialState = {
   data: [],
@@ -30,16 +25,18 @@ const initialState = {
   reveal: false,
   autoAdvance: false, // controls whether to auto advance when editing cards
 
-  mode: 'normal',
-  // test: false, // if we are testing
+  mode: "normal",
+  prevMode: null,
+
   testData: {
     cardTimes: [], // timestamp of when one of the three card options has been clicked. the first timestamp is the start of the test, the last is the end.
-    weightsPreTest: [] // so we can compare improvements after the end of the test
-  }
+    weightsPreTest: [], // so we can compare improvements after the end of the test
+  },
 };
 
 const reducers = {
   setMode: (state, { payload }) => {
+    state.prevMode = state.mode;
     state.mode = payload;
 
     switch (payload) {
@@ -47,10 +44,10 @@ const reducers = {
       case "test": {
         // record pre-weights
         const cards = state.data.slice(state.range[0], state.range[1] + 1);
-        state.testData.weightsPreTest = cards.map(card => card.weight); // keep only the weights
-        
+        state.testData.weightsPreTest = cards.map((card) => card.weight); // keep only the weights
+
         // clear cardTimes and record initial time
-        state.testData.cardTimes = [ Date.now() ];
+        state.testData.cardTimes = [Date.now()];
 
         // clear history
         state.history = [];
@@ -63,7 +60,6 @@ const reducers = {
       }
       // edit mode
       case "edit": {
-        
         break;
       }
       // normal mode
@@ -74,31 +70,43 @@ const reducers = {
       }
     }
   },
+  // brings you back to the previous mode that you were in
+  revertMode: (state, _) => {
+    state.mode = state.prevMode;
+    state.prevMode = null;
+
+    // increase stepper and increment rng index
+    state.stepper = state.stepper + 1;
+    caseReducers.setIndex(state, {});
+  },
 
   /* NORMAL */
 
   /* TESTING */
   next: (state, { payload }) => {
-    if (state.mode !== 'test') return;
+    if (state.mode !== "test") return;
 
     caseReducers.setWeight(state, { payload });
 
+    // reset reveal
+    state.reveal = false;
+
     // add current card to the history
-    state.history = [ ...state.history, state.index ]
-    state.testData.cardTimes = [...state.testData.cardTimes, Date.now()]
+    state.history = [...state.history, state.index];
+    state.testData.cardTimes = [...state.testData.cardTimes, Date.now()];
 
     // increase stepper and increment rng index
     state.stepper = state.stepper + 1;
     caseReducers.setIndex(state, {});
   },
   prev: (state, _) => {
-    if (state.mode !== 'test') return;
+    if (state.mode !== "test") return;
 
     if (state.history.length < 1) return;
 
     // pop first value of history and make it the index
     const [index, ...history] = state.history;
-    caseReducers.setIndex(state, { payload: index })
+    caseReducers.setIndex(state, { payload: index });
 
     state.history = history;
 
@@ -128,10 +136,11 @@ const reducers = {
 
     // filter out the previous card from the list of possible next cards
     // prevents having the same card twice in a row.
-    if (state.repeat) cards = cards.filter(card => state.history[0] !== card.i);
+    if (state.repeat)
+      cards = cards.filter((card) => state.history[0] !== card.i);
     // remove any card in the history
     else {
-      cards = cards.filter(card => state.history.indexOf(card.i) < 0);
+      cards = cards.filter((card) => state.history.indexOf(card.i) < 0);
 
       // if we've ran through all the cards in the testing set
       if (cards.length < 1) {
@@ -144,7 +153,7 @@ const reducers = {
     // such that n is the sum of all weights we're interested in
     let rng =
       seedrandom(state.stepper)() *
-      cards.map(c => c.weight).reduce((tw, w) => tw + w);
+      cards.map((c) => c.weight).reduce((tw, w) => tw + w);
 
     let i = 0;
     while (rng > cards[i].weight) {
@@ -170,7 +179,7 @@ const reducers = {
       case "medium": {
         // calculate the average weight of every card in the set
         const avgWeight =
-          state.data.map(cards => cards.weight).reduce((tw, w) => tw + w) /
+          state.data.map((cards) => cards.weight).reduce((tw, w) => tw + w) /
           state.data.length;
 
         const currentWeight = state.data[cardIndex].weight;
@@ -187,23 +196,22 @@ const reducers = {
     }
   },
 
-  /* EDIT */ 
+  /* EDIT */
   // called when the data of a card is updated
   // (i.e. when a user writes the def. of a card)
   updCard: (state, action) => {
-    const { index, newData } = action.payload; 
+    const { index, newData } = action.payload;
     // only modify changing fields
     state.data[index] = { ...state.data[index], ...newData };
 
-    if (state.autoAdvance)
-      caseReducers.forward(state, action);
+    if (state.autoAdvance) caseReducers.forward(state, action);
   },
 
   /* UTIL - functions called in more than one mode */
   // called when the user loads in a deck of cards
   setCards: (state, { payload }) => {
     // can't set cards during a test
-    if (state.mode === 'test') return;
+    if (state.mode === "test") return;
 
     // if the data is rubbish
     if (!(payload instanceof Object)) return;
@@ -217,8 +225,19 @@ const reducers = {
       state.test = payload.test;
     }
 
-    // set cards
-    state.data = cards;
+    state.edit = payload;
+  },
+  setRepeat: (state, { payload }) => {
+    state.repeat = payload;
+  },
+  setDisplayWeights: (state, { payload }) => {
+    if (state.edit) return;
+
+    state.displayWeights = payload;
+  },
+  addHistory: (state, { payload }) => {
+    // if payload is outside of range, ignore
+    if (payload < state.range[0] || payload > state.range[1]) return;
 
     // update range
     caseReducers.setRange(state, { payload: [0, cards.length - 1] });
@@ -226,14 +245,14 @@ const reducers = {
   // used to download a card set
   getCards: (state, _) => {
     const cardsBlob = new Blob([JSON.stringify(state.data)], {
-      type: "application/json"
+      type: "application/json",
     });
 
     FileSaver.saveAs(cardsBlob, `cards [${formatDate(getDate())}].json`);
   },
   setRange: (state, { payload }) => {
     // don't let the user change the range during a test
-    if (state.mode === 'test') return;
+    if (state.mode === "test") return;
 
     state.range = payload;
 
@@ -249,27 +268,24 @@ const reducers = {
   },
   setReveal: (state, { payload }) => {
     // can't reveal the card def in edit mode since we're editing it
-    if (state.mode !== 'edit')
-      state.reveal = payload;
+    if (state.mode !== "edit") state.reveal = payload;
   },
   setRepeat: (state, { payload }) => {
     // can't change repeat settings during a test
-    if (state.mode !== 'test') 
-      state.repeat = payload;
+    if (state.mode !== "test") state.repeat = payload;
   },
   setAutoAdvance: (state, { payload }) => {
     // can't change this during a test
-    if (state.mode !== 'test') 
-      state.autoAdvance = payload;
-  }
+    if (state.mode !== "test") state.autoAdvance = payload;
+  },
 };
 
 /* Selectors */
 
 // computes and returns the content of the card from the index
 export const cardContent = createSelector(
-  state => state.cards.index,
-  state => state.cards.data,
+  (state) => state.cards.index,
+  (state) => state.cards.data,
   (index, cards) => {
     // if we're done with the testing set
     if (index < 0) return { index };
@@ -281,116 +297,147 @@ export const cardContent = createSelector(
       meaning,
       notes,
       index,
-      weight
+      weight,
     };
   }
 );
 
-export const testingSelector = createSelector(state => state.cards.mode, mode => mode === 'test');
-export const editSelector = createSelector(state => state.cards.mode, mode => mode === 'edit');
-export const normalSelector = createSelector(state => state.cards.mode, mode => mode === 'normal');
+{
+  /* return whether the app in is test mode */
+}
+export const testingSelector = createSelector(
+  (state) => state.cards.mode,
+  (mode) => mode === "test"
+);
+
+export const editSelector = createSelector(
+  (state) => state.cards.mode,
+  (mode) => mode === "edit"
+);
+
+export const normalSelector = createSelector(
+  (state) => state.cards.mode,
+  (mode) => mode === "normal"
+);
+
+export const testDoneSelector = createSelector(
+  (state) => state.cards.index,
+  (index) => {
+    // a test is all done iff we are in test mode AND index is -1
+    const test = useSelector(testingSelector);
+
+    return test && index === -1;
+  }
+);
 
 // create a "selector creator" that uses lodash.isEqual instead of ===
-const createDeepSelector = createSelectorCreator(
-  defaultMemoize,
-  isEqual
-)
+const createDeepSelector = createSelectorCreator(defaultMemoize, isEqual);
 
 // returns characters in the range
 export const characterSelector = createDeepSelector(
   [
-    state => state.cards.data.map(card => card.char),
-    state => state.cards.range
-  ], 
+    (state) => state.cards.data.map((card) => card.char),
+    (state) => state.cards.range,
+  ],
   (characters, range) => characters.slice(range[0], range[1] + 1)
 );
 
 // find smallest and largest weight
 export const weightSelector = createDeepSelector(
-  state => state.cards.data.map(card => card.weight),
+  (state) => state.cards.data.map((card) => card.weight),
   (weights) => {
     let maxWeight = 0;
     let minWeight = 1000;
 
     for (let weight of weights) {
-      if (weight > maxWeight)
-        maxWeight = weight;
+      if (weight > maxWeight) maxWeight = weight;
 
-      if (weight < minWeight)
-        minWeight = weight;
+      if (weight < minWeight) minWeight = weight;
     }
 
     return { minWeight, maxWeight };
   }
-)
+);
 
 // returns mapped data for the cardset visualization in the sidebar
-export const itemSelector = i => createDeepSelector(
-  [
-    state => state.cards.index,
-    // map through cards to prevent unnecessary rerenders on weight changes
-    state => state.cards.data.map(({ meaning, notes, weight }) => ({ meaning, notes, weight }))[i], 
-    state => state.cards.range,
-    state => state.cards.history,
-    state => state.cards.mode,
-    weightSelector
-  ],
-  (index, card, range, history, mode, { minWeight, maxWeight }) => {
-    const { meaning, notes, weight } = card;
-    let color = theme.palette.grey[800];
-    
-    switch (mode) {
-      case "edit": {
-        if (meaning)
-          color = theme.palette.warning.light;
-        
-        if (notes)
-          color = theme.palette.warning.dark
+export const colorSelector = (i) =>
+  createDeepSelector(
+    [
+      (state) => state.cards.index,
+      // map through cards to prevent unnecessary rerenders on weight changes
+      (state) =>
+        state.cards.data.map(({ meaning, notes, weight }) => ({
+          meaning,
+          notes,
+          weight,
+        }))[i],
+      (state) => state.cards.range,
+      (state) => state.cards.history,
+      (state) => state.cards.mode,
+      weightSelector,
+    ],
+    (index, card, range, history, mode, { minWeight, maxWeight }) => {
+      const { meaning, notes, weight } = card;
+      let color = theme.palette.grey[800];
 
-        break;
+      switch (mode) {
+        case "edit": {
+          if (meaning) color = theme.palette.warning.light;
+
+          if (notes) color = theme.palette.warning.dark;
+
+          break;
+        }
+        case "test": {
+          // if the node is in the range
+          if (i >= range[0] && i <= range[1]) color = theme.palette.grey[700];
+
+          if (history.indexOf(i) > -1) color = theme.palette.success.dark;
+
+          // color the current node differently
+          if (i === index) color = theme.palette.info.main;
+
+          break;
+        }
+        default: {
+          const quad = quadInterpolation(weight, minWeight, maxWeight);
+
+          if (i >= range[0] && i <= range[1])
+            color = interpolateLab(
+              theme.palette.success.dark,
+              theme.palette.error.dark
+            )(quad);
+        }
       }
-      case "test": {
-        // if the node is in the range
-        if (i >= range[0] && i <= range[1])
-          color = theme.palette.grey[700];
 
-        if (history.indexOf(i) > -1)
-          color = theme.palette.success.dark
-        
-        // color the current node differently
-        if (i === index) 
-          color = theme.palette.info.main; 
-
-        break;
-      }
-      default: {
-        const quad = quadInterpolation(weight, minWeight, maxWeight)
-
-        if (i >= range[0] && i <= range[1])
-          color = interpolateLab(theme.palette.success.dark, theme.palette.error.dark)(quad);
-      }
+      return color;
     }
-    
-
-    return color
-  }
-);
+  );
 
 // returns statistics about the test that just concluded
 // TODO: since this is used at a particular time in the lifecylcle of the app, maybe a selector is not the best way to do it
 export const statSelector = createSelector(
   [
-    state => state.cards.data.slice(state.cards.range[0], state.cards.range[1] + 1).map(cards => cards.weight),
-    state => state.cards.testData.weightsPreTest,
-    state => state.cards.testData.cardTimes,
-    state => state.cards.range[0],
+    (state) =>
+      state.cards.data
+        .slice(state.cards.range[0], state.cards.range[1] + 1)
+        .map((cards) => cards.weight),
+    (state) => state.cards.testData.weightsPreTest,
+    (state) => state.cards.testData.cardTimes,
+    (state) => state.cards.range[0],
   ],
   (newCardWeights, oldCardWeights, cardTimeStamps, startRange) => {
-    const weightDeltas = newCardWeights.map((weight, i) => weight - oldCardWeights[i]); // calculate card improvement for each card
-    const avgWeightDelta = weightDeltas.reduce((twd, wd) => twd + wd) / weightDeltas.length; // calculate average card improvement
+    const weightDeltas = newCardWeights.map(
+      (weight, i) => weight - oldCardWeights[i]
+    ); // calculate card improvement for each card
+    const avgWeightDelta =
+      weightDeltas.reduce((twd, wd) => twd + wd) / weightDeltas.length; // calculate average card improvement
 
-    const [_, ...cardTimes] = cardTimeStamps.map((ts, i) => ts - cardTimeStamps[Math.max(0, i - 1)]); // calculate array of deltas, the first value being 0 is ignored
-    const totalTime = cardTimeStamps[cardTimeStamps.length - 1] - cardTimeStamps[0]; // last time - first time to get total time spent on test
+    const [_, ...cardTimes] = cardTimeStamps.map(
+      (ts, i) => ts - cardTimeStamps[Math.max(0, i - 1)]
+    ); // calculate array of deltas, the first value being 0 is ignored
+    const totalTime =
+      cardTimeStamps[cardTimeStamps.length - 1] - cardTimeStamps[0]; // last time - first time to get total time spent on test
     const avgTime = cardTimes.reduce((tt, ct) => tt + ct) / cardTimes.length; // get average time spent on card
 
     return {
@@ -398,20 +445,20 @@ export const statSelector = createSelector(
         index: startRange + i,
         weightDelta: wd,
         prevWeight: oldCardWeights[i],
-        time: cardTimes[i]
+        time: cardTimes[i],
       })),
       avgWeightDelta,
       totalTime,
-      avgTime
-    }
+      avgTime,
+    };
   }
-)
+);
 
 const { reducer, caseReducers, actions } = createSlice({
   name: "cards",
   // initialState: test1,
   initialState,
-  reducers
+  reducers,
 });
 
 // persist the cards reducer to save user data
@@ -428,5 +475,5 @@ export const cardsReducer = persistReducer(
 // append exports
 module.exports = {
   ...module.exports,
-  ...actions
+  ...actions,
 };

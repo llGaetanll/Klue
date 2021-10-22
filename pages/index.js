@@ -4,18 +4,23 @@ import { useSelector } from "react-redux";
 import { Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { Sidebar } from "../components/sidebar";
+import Sidebar from "../components/sidebar/index";
 import { HorizontalBar } from "../components/horizontalbar";
-import { Card, Options } from "../components/card";
 import { Main as KeyBinds } from "../components/util/keybinds";
+
+// main content of the page
+// depends on the mode (normal, edit, etc...)
+import NormalContent from "./normal";
+import EditContent from "./edit";
+import TestContent from "./test";
 
 const Load = dynamic(() => import("./load"));
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   content: {
     display: "flex",
     flexDirection: "row",
-    flex: 1
+    flex: 1,
   },
   card: {
     display: "flex",
@@ -23,26 +28,34 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center",
     justifyContent: "center",
 
-    flex: 2
-  }
-}));
+    flex: 2,
+  },
+});
 
-const Index = props => {
+// content of the page depends on app mode
+const CONTENT = {
+  normal: <NormalContent />,
+  edit: <EditContent />,
+  test: <TestContent />,
+};
+
+const Index = () => {
   const classes = useStyles();
 
-  const cards = useSelector(state => state.cards.data);
+  const cards = useSelector((state) => state.cards.data);
 
   if (cards.length < 1) return <Load />;
+
+  // mode is used to determine the state of the program
+  const mode = useSelector((state) => state.cards.mode);
+  const content = CONTENT[mode];
 
   return (
     <Box display="flex" flex={1} flexDirection="column">
       <KeyBinds />
       <Box className={classes.content}>
         <Sidebar />
-        <Box className={classes.card}>
-          <Card />
-          <Options />
-        </Box>
+        {content}
       </Box>
       <HorizontalBar />
     </Box>

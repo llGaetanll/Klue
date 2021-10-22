@@ -5,16 +5,16 @@ import PublishIcon from "@material-ui/icons/Publish";
 
 import UploadButton from "../components/util/uploadButton";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   load: {
     display: "flex",
     flexDirection: "column",
     flex: 1,
 
     alignItems: "center",
-    justifyContent: "center"
-  }
-}));
+    justifyContent: "center",
+  },
+});
 
 const Load = () => {
   const classes = useStyles();
