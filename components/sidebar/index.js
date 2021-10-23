@@ -110,6 +110,7 @@ const useStatStyles = makeStyles((theme) => ({
   bar: {
     display: "flex",
     flexDirection: "row",
+    height: 54,
   },
   section: {
     display: "flex",
@@ -150,11 +151,12 @@ const CardStats = () => {
   const showWeight = useSelector((state) => state.settings.showWeight);
 
   // color is shown as the weight of the card
-  const color = useSelector(colorSelector(index));
+  const color = useSelector(colorSelector(2));
+  const testing = useSelector(testingSelector);
 
   return (
     <Box className={classes.bar}>
-      {showIndex && index > -1 && (
+      {!testing && showIndex && (
         <Box className={classes.section}>
           <Typography className={classes.number}>#</Typography>
           <Typography className={classes.value}>{index + 1}</Typography>
@@ -166,7 +168,7 @@ const CardStats = () => {
           {numCards}/{cardCount}
         </Typography>
       </Box>
-      {showWeight && weight && (
+      {!testing && showWeight && weight && (
         <Box className={classes.section}>
           <Typography className={classes.key}>Weight</Typography>
           <Tooltip title={weight}>

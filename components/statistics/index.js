@@ -16,6 +16,12 @@ import {
 import { round, formatTime } from "../../util";
 
 const useStyles = makeStyles((theme) => ({
+  endOfTestContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
   header: {
     display: "flex",
     minWidth: 600,
@@ -41,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
   },
   stats: {
     display: "flex",
-    height: 700,
+    flex: 1,
 
     marginBottom: theme.spacing(2),
   },
@@ -61,7 +67,7 @@ export const EndOfTest = () => {
   const { totalTime, avgTime, avgWeightDelta } = headerStats;
 
   return (
-    <Box display="flex" flexDirection="column">
+    <Box className={classes.endOfTestContainer}>
       <Typography component="h1" variant="h3">
         All Set!
       </Typography>
@@ -95,35 +101,35 @@ export const EndOfTest = () => {
         </HeaderStat>
       </Box>
 
-      <Box flex={1} />
+      {/* <Box flex={1} /> */}
 
-      {/* 
-        <Box className={classes.stats}>
-          <VirtualTable
-            rowCount={characters.length}
-            rowGetter={({ index }) => ({ character: characters[index], weights, ...cardStats[index] })}
-            columns={
-              [
-                {
-                  width: 50,
-                  dataKey: 'char',
-                  label: 'Character'
-                },
-                {
-                  width: 200,
-                  dataKey: 'graph',
-                  label: 'Statistics'
-                },
-                {
-                  width: 50,
-                  dataKey: 'time',
-                  label: 'Time'
-                },
-              ]
-            }
-          />
-        </Box>
-      */}
+      <Box className={classes.stats}>
+        <VirtualTable
+          rowCount={characters.length}
+          rowGetter={({ index }) => ({
+            character: characters[index],
+            weights,
+            ...cardStats[index],
+          })}
+          columns={[
+            {
+              width: 50,
+              dataKey: "char",
+              label: "Character",
+            },
+            {
+              width: 200,
+              dataKey: "graph",
+              label: "Statistics",
+            },
+            {
+              width: 50,
+              dataKey: "time",
+              label: "Time",
+            },
+          ]}
+        />
+      </Box>
 
       <Box display="flex">
         <Button onClick={() => handleMode("normal")}>Back to Cards</Button>

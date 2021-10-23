@@ -55,7 +55,6 @@ const reducers = {
         // increase stepper and increment rng index
         state.stepper = state.stepper + 1;
         caseReducers.setIndex(state, {});
-
         break;
       }
       // edit mode
@@ -64,7 +63,7 @@ const reducers = {
       }
       // normal mode
       default: {
-        state.index = 0; // reset index on normal mode
+        // state.index = 0; // reset index on normal mode
 
         break;
       }
@@ -143,9 +142,17 @@ const reducers = {
       cards = cards.filter((card) => state.history.indexOf(card.i) < 0);
 
       // if we've ran through all the cards in the testing set
+      /* 
       if (cards.length < 1) {
         state.index = -1;
         return;
+      }
+      */
+
+      // if we've ran through all the cards, there is no next index
+      // simply set done to true and return current index
+      if (cards.length < 1) {
+        return state.index;
       }
     }
 
@@ -216,7 +223,6 @@ const reducers = {
     // if the data is rubbish
     if (!(payload instanceof Object)) return;
 
-    let cards = [];
     // support old card sets by checking for array
     if (payload instanceof Array) {
       cards = payload;
@@ -321,12 +327,16 @@ export const normalSelector = createSelector(
 );
 
 export const testDoneSelector = createSelector(
-  (state) => state.cards.index,
-  (index) => {
-    // a test is all done iff we are in test mode AND index is -1
-    const test = useSelector(testingSelector);
+  (state) => state.cards.history.length,
+  (state) => state.cards.range,
+  (histLength, range) => {
+    const rangeLength = range[1] - range[0] + 1;
 
-    return test && index === -1;
+    const testing = useSelector(testingSelector);
+
+    // a test is all done iff we are in test mode AND the
+    // length of the history == range length
+    return testing && rangeLength === histLength;
   }
 );
 
