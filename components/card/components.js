@@ -1,23 +1,19 @@
 import { useEffect, useRef } from "react";
 
-import {
-  Box,
-  Typography,
-  TextField as MuiTextField,
-} from "@material-ui/core";
+import { Box, Typography, TextField as MuiTextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   card: {
     width: 300,
     minHeight: 400,
 
     display: "flex",
-    userSelect: 'none'
+    userSelect: "none",
   },
   content: {
     display: "block",
-    flex: 1
+    flex: 1,
   },
   character: {
     position: "relative",
@@ -25,10 +21,10 @@ const useStyles = makeStyles(theme => ({
 
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   input: {
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
   index: {
     position: "absolute",
@@ -36,41 +32,41 @@ const useStyles = makeStyles(theme => ({
     lineHeight: "initial",
     fontSize: 24,
     fontWeight: 600,
-    opacity: 0.7
+    opacity: 0.7,
   },
   cardInfo: {
     display: "flex",
     flex: 2,
     justifyContent: "center",
-    flexDirection: "column"
+    flexDirection: "column",
   },
 
   component: {
-    display: 'flex',
+    display: "flex",
 
     // display actions menu on hover
-    '&:hover $action': {
-      opacity: 1
+    "&:hover $action": {
+      opacity: 1,
     },
 
     minHeight: 48,
-    alignItems: 'center'
+    alignItems: "center",
   },
   action: {
     opacity: 0,
 
-    position: 'absolute',
-    transform: 'translateX(-100%)',
+    position: "absolute",
+    transform: "translateX(-100%)",
 
     "&:hover": {
-      backgroundColor: "transparent"
-    }
+      backgroundColor: "transparent",
+    },
   },
 }));
 
-const useFieldStyles = makeStyles(theme => ({
+const useFieldStyles = makeStyles((theme) => ({
   editTextField: {
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
 }));
 
@@ -79,18 +75,19 @@ export const TextField = ({ display, edit, value, setValue, ...props }) => {
   const classes = useFieldStyles(); // default styles for every field
   const inputRef = useRef();
 
-  const { inputProps: { focus, ...inputProps }, textFieldProps } = props;
+  const {
+    inputProps: { focus, ...inputProps },
+    textFieldProps,
+  } = props;
 
-  const handleEdit = event => setValue(event.target.value);
+  const handleEdit = (event) => setValue(event.target.value);
 
   // focus the input ref
   useEffect(() => {
-    // console.log("useEffect", edit, focus)
     if (edit && focus) {
-      // console.log("focusing")
       inputRef.current.focus();
     }
-  }, [edit, display])
+  }, [edit, display]);
 
   if (edit)
     return (
@@ -103,12 +100,11 @@ export const TextField = ({ display, edit, value, setValue, ...props }) => {
       />
     );
 
-  if (!display) 
-    return <></>;
+  if (!display) return <></>;
 
   return (
     <Typography className={classes.textField} {...textFieldProps}>
       {value}
     </Typography>
   );
-}
+};
