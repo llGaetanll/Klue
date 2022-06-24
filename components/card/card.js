@@ -56,6 +56,7 @@ const Card = () => {
   const [cardState, setCardState] = useState({});
 
   const { character, meaning, notes, index } = useSelector(cardContent);
+
   // update fields when index or field changes
   useEffect(() => setMeaning(meaning), [meaning, index]);
   useEffect(() => setNotes(notes), [notes, index]);
@@ -66,7 +67,64 @@ const Card = () => {
   const reveal = useSelector((state) => state.cards.reveal);
   const edit = useSelector(editSelector);
 
-  console.log(reveal);
+  return (
+    <MuiCard className={classes.card}>
+      <CardContent className={classes.content}>
+        <Box flex={1} className={classes.content}>
+          <Typography className={classes.character} variant="h1">
+            {character}
+          </Typography>
+        </Box>
+        <Box flex={2} className={classes.content}>
+          <TextField
+            display={meaning && reveal}
+            edit={edit}
+            value={cardState.meaning}
+            setValue={setMeaning}
+            textFieldProps={{
+              variant: "h4",
+              component: "h1",
+            }}
+            inputProps={{
+              label: "Meaning",
+              variant: "outlined",
+              focus: true,
+            }}
+          />
+          <TextField
+            display={notes && reveal}
+            edit={edit}
+            value={cardState.notes}
+            setValue={setNotes}
+            inputProps={{
+              variant: "outlined",
+              label: "Notes",
+              rows: 4,
+              multiline: true,
+            }}
+          />
+        </Box>
+      </CardContent>
+    </MuiCard>
+  );
+};
+
+export const DisplayCard = ({ index }) => {
+  const { character, meaning, notes, weight } = useSelector(
+    createSelector(
+      (state) => state.cards.data,
+      (cards) => {
+        const { char: character, meaning, notes, weight } = cards[index];
+
+        return {
+          character,
+          meaning,
+          notes,
+          weight,
+        };
+      }
+    )
+  );
 
   return (
     <MuiCard className={classes.card}>
@@ -77,35 +135,33 @@ const Card = () => {
           </Typography>
         </Box>
         <Box flex={2} className={classes.content}>
-          <>
-            <TextField
-              display={meaning && reveal}
-              edit={edit}
-              value={cardState.meaning}
-              setValue={setMeaning}
-              textFieldProps={{
-                variant: "h4",
-                component: "h1",
-              }}
-              inputProps={{
-                label: "Meaning",
-                variant: "outlined",
-                focus: true,
-              }}
-            />
-            <TextField
-              display={notes && reveal}
-              edit={edit}
-              value={cardState.notes}
-              setValue={setNotes}
-              inputProps={{
-                variant: "outlined",
-                label: "Notes",
-                rows: 4,
-                multiline: true,
-              }}
-            />
-          </>
+          <TextField
+            display={meaning}
+            edit={edit}
+            value={cardState.meaning}
+            setValue={setMeaning}
+            textFieldProps={{
+              variant: "h4",
+              component: "h1",
+            }}
+            inputProps={{
+              label: "Meaning",
+              variant: "outlined",
+              focus: true,
+            }}
+          />
+          <TextField
+            display={notes}
+            edit={edit}
+            value={cardState.notes}
+            setValue={setNotes}
+            inputProps={{
+              variant: "outlined",
+              label: "Notes",
+              rows: 4,
+              multiline: true,
+            }}
+          />
         </Box>
       </CardContent>
     </MuiCard>
