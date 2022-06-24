@@ -9,9 +9,12 @@ import { colorSelector, testingSelector, setIndex } from "../../src/cards";
 
 const useStyles = makeStyles((theme) => ({
   dots: {
-    // flex: 1,
+    flex: 1,
     width: 550, // TODO: width should use @media tags
-    display: "block",
+    display: "flex",
+
+    flexWrap: "wrap",
+    gap: "7px", // TODO: this version of MUI is too old and doesn't support flex gap natively
 
     marginRight: -3,
     padding: theme.spacing(2),
@@ -50,14 +53,11 @@ const variants = {
 };
 
 const DOT_STYLES = {
-  display: "inline-block",
-  float: "left",
+  display: "block",
   width: 5,
   height: 5,
 
   borderRadius: "50%",
-  marginRight: 7,
-  marginBottom: 7,
 
   cursor: "pointer",
 };
@@ -71,7 +71,7 @@ const Item = ({ index, handleClick }) => {
   const selected = useSelector((state) => state.cards.index === index);
 
   return (
-    <motion.div
+    <motion.span
       animate={selected ? "selected" : "def"}
       variants={variants}
       onClick={() => handleClick(index)}
