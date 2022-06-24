@@ -6,8 +6,8 @@ import { createSlice, createSelector } from "@reduxjs/toolkit";
 // list of keyboard shortcuts
 const initialState = {
   keybinds: {
-    FORWARD: "right",
-    BACKWARD: "left",
+    FORWARD: ["right", "l"],
+    BACKWARD: ["left", "h"],
     EASY: "1",
     MEDIUM: "2",
     HARD: "3",
