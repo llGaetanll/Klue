@@ -72,6 +72,8 @@ const Divider = () => {
 // Upload, Download, Settings...
 const Misc = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const { setDialog } = useContext(FeedbackContext);
 
   const handleDownload = () => dispatch(getCards());
