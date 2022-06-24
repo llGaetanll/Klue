@@ -66,6 +66,8 @@ export const Card = () => {
   const reveal = useSelector((state) => state.cards.reveal);
   const edit = useSelector(editSelector);
 
+  console.log(reveal);
+
   return (
     <MuiCard className={classes.card}>
       <CardContent className={classes.content}>
@@ -75,37 +77,35 @@ export const Card = () => {
           </Typography>
         </Box>
         <Box flex={2} className={classes.content}>
-          {reveal || (
-            <>
-              <TextField
-                display={meaning}
-                edit={edit}
-                value={cardState.meaning}
-                setValue={setMeaning}
-                textFieldProps={{
-                  variant: "h4",
-                  component: "h1",
-                }}
-                inputProps={{
-                  label: "Meaning",
-                  variant: "outlined",
-                  focus: true,
-                }}
-              />
-              <TextField
-                display={notes && reveal}
-                edit={edit}
-                value={cardState.notes}
-                setValue={setNotes}
-                inputProps={{
-                  variant: "outlined",
-                  label: "Notes",
-                  rows: 4,
-                  multiline: true,
-                }}
-              />
-            </>
-          )}
+          <>
+            <TextField
+              display={meaning && reveal}
+              edit={edit}
+              value={cardState.meaning}
+              setValue={setMeaning}
+              textFieldProps={{
+                variant: "h4",
+                component: "h1",
+              }}
+              inputProps={{
+                label: "Meaning",
+                variant: "outlined",
+                focus: true,
+              }}
+            />
+            <TextField
+              display={notes && reveal}
+              edit={edit}
+              value={cardState.notes}
+              setValue={setNotes}
+              inputProps={{
+                variant: "outlined",
+                label: "Notes",
+                rows: 4,
+                multiline: true,
+              }}
+            />
+          </>
         </Box>
       </CardContent>
     </MuiCard>
