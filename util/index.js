@@ -3,7 +3,7 @@
  * @param {Object} obj
  * @returns {boolean}
  */
-export const isEmptyObj = obj =>
+export const isEmptyObj = (obj) =>
   Object.keys(obj).length === 0 && obj.constructor === Object;
 
 export const randFromInterval = (min, max) =>
@@ -26,7 +26,7 @@ export const formatDate = (dateTime, useAmericanDate = false) => {
   const m = dateTime.getMonth();
   const y = dateTime.getFullYear();
 
-  const formatTime = t => `0${t}`.slice(-2); // allows for 01/04/2020 instead of 1/4/2020. consistency
+  const formatTime = (t) => `0${t}`.slice(-2); // allows for 01/04/2020 instead of 1/4/2020. consistency
 
   let date = useAmericanDate
     ? `${formatTime(m)}-${formatTime(d)}`
@@ -35,8 +35,8 @@ export const formatDate = (dateTime, useAmericanDate = false) => {
   return date + `-${y}`;
 };
 
-const formatSubsecond = number => ("00" + number).slice(-2 - 1, -1);
-const format = number => ("0" + number).slice(-2);
+const formatSubsecond = (number) => ("00" + number).slice(-2 - 1, -1);
+const format = (number) => ("0" + number).slice(-2);
 
 /**
  * Format times from number of ms to hours:minutes:seconds:ms
@@ -52,8 +52,7 @@ export const formatTime = (time, hasMS = true) => {
   const hours = Math.trunc(minutes / 60);
 
   const hrStr = (() => {
-    if (hours === 0) 
-      return;
+    if (hours === 0) return;
 
     if (hours < 10) return `${hours % 60}`;
 
@@ -61,8 +60,7 @@ export const formatTime = (time, hasMS = true) => {
   })();
 
   const minStr = (() => {
-    if (minutes === 0)
-      return;
+    if (minutes === 0) return;
 
     if (minutes < 10) return `${minutes % 60}`;
 
@@ -76,25 +74,25 @@ export const formatTime = (time, hasMS = true) => {
     h: hrStr,
     m: minStr,
     s: secStr,
-    ms: hasMS ? msStr : null
-  }
+    ms: hasMS ? msStr : null,
+  };
 };
-
 
 /**
  * Rounds a number to n decimal places
  */
-export const round = (number, decimalCount) => 
+export const round = (number, decimalCount) =>
   Math.round(number * Math.pow(10, decimalCount)) / Math.pow(10, decimalCount);
 
-export const linInterpolation = (val, min, max) => 
-  (val - min) / (max - min);
+export const linInterpolation = (val, min, max) => (val - min) / (max - min);
 
 /**
  *
  * (min, 0)
  * (DEF_WEIGHT, 0.5)
  * (max, 1)
+ *
+ * TODO: This function sucks anyway, better rewrite this using some other algorithm
  *
  */
 export const quadInterpolation = (index, min, max) => {
@@ -109,20 +107,25 @@ export const quadInterpolation = (index, min, max) => {
   const f = DEF_WEIGHT;
   const g = 1;
   const h = 0.5;
-  
+
   const i = Math.pow(max, 2);
   const j = max;
   const k = 1;
   const l = 1;
 
-  const denom= (a * f * k) + (b * g * i) + (c * e * j) - (c * f * i) - (a * g * j) - (b * e * k);
-  const aNum = (d * f * k) + (b * g * l) + (c * h * j) - (c * f * l) - (d * g * j) - (b * h * k);
-  const bNum = (a * h * k) + (d * g * i) + (c * e * l) - (c * h * i) - (a * g * l) - (d * e * k);
-  const cNum = (a * f * l) + (b * h * i) + (d * e * j) - (d * f * i) - (a * h * j) - (b * e * l);
+  // TODO: division by 0
+  const denom =
+    a * f * k + b * g * i + c * e * j - c * f * i - a * g * j - b * e * k;
+  const aNum =
+    d * f * k + b * g * l + c * h * j - c * f * l - d * g * j - b * h * k;
+  const bNum =
+    a * h * k + d * g * i + c * e * l - c * h * i - a * g * l - d * e * k;
+  const cNum =
+    a * f * l + b * h * i + d * e * j - d * f * i - a * h * j - b * e * l;
 
   const x = aNum / denom;
   const y = bNum / denom;
   const z = cNum / denom;
 
   return x * Math.pow(index, 2) + y * index + z;
-}
+};
