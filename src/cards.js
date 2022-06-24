@@ -303,9 +303,7 @@ export const cardContent = createSelector(
   }
 );
 
-{
-  /* return whether the app in is test mode */
-}
+/* return whether the app in is test mode */
 export const testingSelector = createSelector(
   (state) => state.cards.mode,
   (mode) => mode === "test"
