@@ -223,15 +223,10 @@ const reducers = {
     // if the data is rubbish
     if (!(payload instanceof Object)) return;
 
-    // support old card sets by checking for array
-    if (payload instanceof Array) {
-      cards = payload;
-    } else {
-      cards = payload.cards;
-      state.test = payload.test;
-    }
+    // cards is a list of objects
+    const cards = payload;
 
-    state.edit = payload;
+    state.data = cards;
   },
   setRepeat: (state, { payload }) => {
     state.repeat = payload;
@@ -356,14 +351,20 @@ export const characterSelector = createDeepSelector(
 export const weightSelector = createDeepSelector(
   (state) => state.cards.data.map((card) => card.weight),
   (weights) => {
-    let maxWeight = 0;
-    let minWeight = 1000;
+    // console.log(weights);
+    // let maxWeight = 0;
+    // let minWeight = 1000;
 
+    let minWeight = Math.min(...weights);
+    let maxWeight = Math.max(...weights);
+
+    /*
     for (let weight of weights) {
       if (weight > maxWeight) maxWeight = weight;
 
       if (weight < minWeight) minWeight = weight;
     }
+    */
 
     return { minWeight, maxWeight };
   }
