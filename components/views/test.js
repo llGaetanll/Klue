@@ -2,10 +2,12 @@ import { useSelector } from "react-redux";
 
 import { Box } from "@material-ui/core";
 
-import { EndOfTest } from "../components/statistics";
-import { Card, Options } from "../components/card";
+import { EndOfTest } from "../statistics";
 
-import { testDoneSelector } from "../src/cards";
+import Card from "../card/Card";
+import TestOptions from "../card/TestOptions";
+
+import { testDoneSelector } from "../../src/cards";
 
 // what the page looks like in test mode
 const Test = () => {
@@ -19,7 +21,7 @@ const Test = () => {
         ) : (
           <Box display="flex" justifyContent="center" flexDirection="column">
             <Card />
-            <Options />
+            <TestOptions />
           </Box>
         )}
       </Box>

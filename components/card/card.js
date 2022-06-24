@@ -9,7 +9,7 @@ import {
   CardContent,
 } from "@material-ui/core";
 
-import { TextField } from "./components";
+import TextField from "./TextField";
 import { cardContent, editSelector } from "../../src/cards";
 
 const useStyles = makeStyles((theme) => ({
@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // actual card component
-export const Card = () => {
+const Card = () => {
   const classes = useStyles();
   const [cardState, setCardState] = useState({});
 
@@ -111,3 +111,5 @@ export const Card = () => {
     </MuiCard>
   );
 };
+
+export default Card;

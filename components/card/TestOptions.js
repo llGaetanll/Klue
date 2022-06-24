@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "@reduxjs/toolkit";
 
@@ -8,17 +8,25 @@ import { makeStyles } from "@material-ui/core/styles";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 
-import { next, prev, forward, backward, cardContent, testingSelector, editSelector } from "../../src/cards";
+import {
+  next,
+  prev,
+  forward,
+  backward,
+  cardContent,
+  testingSelector,
+  editSelector,
+} from "../../src/cards";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   options: {
     display: "flex",
 
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   option: {
-    flex: 1
-  }
+    flex: 1,
+  },
 }));
 
 // button wrapper that unfocuses onClick
@@ -26,50 +34,43 @@ const Button = ({ children, onClick, ...props }) => {
   const ref = useRef();
 
   const handleClick = (event) => {
-    ref.current.blur();
+    ref.current.blur(); // unfocus
     onClick(event);
-  }
+  };
 
   return (
     <MuiButton ref={ref} onClick={handleClick} {...props}>
       {children}
     </MuiButton>
   );
-}
+};
 
-export const Options = () => {
+const TestOptions = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const ref = useRef();
 
   const cardIndex = useSelector(
-    createSelector(
-      cardContent,
-      content => content.index
-    )
+    createSelector(cardContent, (content) => content.index)
   );
 
   const test = useSelector(testingSelector);
   const edit = useSelector(editSelector);
-  const history = useSelector(state => state.cards.history);
-  const range = useSelector(state => state.cards.range);
+  const history = useSelector((state) => state.cards.history);
+  const range = useSelector((state) => state.cards.range);
 
   // testing mode options
-  const handleDiff = option =>
-    dispatch(next(option));
+  const handleDiff = (option) => dispatch(next(option));
   const handlePrev = () => {
     ref.current.blur(); // unfocus button after press
     dispatch(prev());
   };
 
   // edit mode options
-  const handleForward = () => 
-    dispatch(forward());
-  const handleBackward = () => 
-    dispatch(backward());
+  const handleForward = () => dispatch(forward());
+  const handleBackward = () => dispatch(backward());
 
-  if (!test)
-    return <></>;
+  if (!test) return <></>;
 
   return (
     <Paper className={classes.options}>
@@ -118,3 +119,5 @@ export const Options = () => {
     </Paper>
   );
 };
+
+export default TestOptions;

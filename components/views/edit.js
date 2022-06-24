@@ -1,9 +1,9 @@
 import { Box } from "@material-ui/core";
 
-import { Card } from "../components/card";
+import Card from "../card/Card";
 
-// what the page looks like in normal mode
-const Normal = () => (
+// what the page looks like in edit mode
+const Edit = () => (
   <>
     <Box flex={2} display="flex" alignItems="center" justifyContent="center">
       <Card />
@@ -11,4 +11,4 @@ const Normal = () => (
   </>
 );
 
-export default Normal;
+export default Edit;
