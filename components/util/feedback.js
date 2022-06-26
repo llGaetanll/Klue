@@ -9,6 +9,8 @@ import {
 
 import { isEmptyObj } from "../../util";
 
+import theme from "../../util/theme";
+
 export const AlertList = ({ alerts, remAlert }) => {
   // this list contains all currently visible alerts.
   // it's updated whenever the context's alert change
