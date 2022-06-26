@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { TableCell, Tooltip } from "@mui/material";
 
 import Time from "../time";
-import CardStat from "../../statistics/cardstat";
+import CardStat from "../../statistics/CardStat";
 
 import { useTableStyles } from "./index";
 import { formatTime, round } from "../../../util/index";

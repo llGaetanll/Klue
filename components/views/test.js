@@ -4,8 +4,8 @@ import { Box } from "@mui/material";
 
 import { EndOfTest } from "../statistics";
 
-import Card from "../card/card";
-import TestOptions from "../card/testoptions";
+import Card from "../card/Card";
+import TestOptions from "../card/TestOptions";
 
 import { testDoneSelector } from "../../src/cards";
 

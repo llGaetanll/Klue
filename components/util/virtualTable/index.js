@@ -6,8 +6,8 @@ import { makeStyles } from "@mui/styles";
 
 import { AutoSizer, Column, Table } from "react-virtualized";
 
-import { CharRenderer, GraphRenderer, TimeRenderer } from "./cellrenderer";
-import HeaderRenderer from "./headerrenderer";
+import { CharRenderer, GraphRenderer, TimeRenderer } from "./CellRenderer";
+import HeaderRenderer from "./HeaderRenderer";
 
 import theme from "../../../util/theme";
 

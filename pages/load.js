@@ -2,7 +2,7 @@ import { Box, Typography, Button, Link } from "@mui/material";
 
 import PublishIcon from "@mui/icons-material/Publish";
 
-import UploadButton from "../components/util/uploadbutton";
+import UploadButton from "../components/util/UploadButton";
 
 const Load = () => (
   <Box
