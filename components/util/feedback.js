@@ -58,7 +58,9 @@ export const Alert = ({ alertKey: key, msg, severity, remAlert, params }) => {
       open={open}
       autoHideDuration={lifetimeMS}
       onClose={handleClose}
-      onExited={handleExited}
+      TransitionProps={{
+        onExited: handleExited,
+      }}
       css={{
         position: "relative",
         margin: theme.spacing(2),
@@ -99,7 +101,9 @@ export const Dialog = ({ children, onClose, remDialog }) => {
     <MuiDialog
       open={open}
       onClose={() => handleClose(null)}
-      onExited={handleExited}
+      TransitionProps={{
+        onExited: handleExited,
+      }}
     >
       {/* here no need for `cloneElement` since Dialogs don't use refs */}
       {<children.type {...children.props} onClose={handleClose} />}
@@ -130,7 +134,9 @@ export const Menu = ({ anchor, children, onClose, remMenu }) => {
       anchorEl={anchor}
       open={open}
       onClose={() => handleClose(null)}
-      onExited={handleExited}
+      TransitionProps={{
+        onExited: handleExited,
+      }}
     >
       {/* Allow the passing in of props directly from the setMenu function */}
       {/* cloneElement also forwards the refs, which is necessary for a Menu */}
