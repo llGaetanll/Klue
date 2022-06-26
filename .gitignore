@@ -18,3 +18,4 @@ yarn-error.log*
 next.config.*
 .now
 .vercel
+next.lock/

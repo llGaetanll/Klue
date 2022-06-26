@@ -5,43 +5,17 @@ import { createSelector } from "@reduxjs/toolkit";
 import {
   Paper,
   Box,
-  Button,
   Slider,
   Tooltip,
   IconButton,
   InputBase,
-} from "@material-ui/core";
+} from "@mui/material";
 
-import UpdateIcon from "@material-ui/icons/Update";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import DoneAllIcon from "@material-ui/icons/DoneAll";
+import UpdateIcon from "@mui/icons-material/Update";
 
-import { makeStyles } from "@material-ui/core/styles";
+import theme from "../../util/theme";
 
-import {
-  setMode,
-  setRange,
-  testingSelector,
-  normalSelector,
-} from "../src/cards";
-
-const useStyles = makeStyles((theme) => ({
-  range: {
-    display: "flex",
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  slider: {
-    width: "100%",
-    margin: `0 ${theme.spacing(2)}px`,
-  },
-  input: {
-    padding: `0 ${theme.spacing(1)}px`,
-
-    maxWidth: 70,
-  },
-}));
+import { setRange, testingSelector } from "../../src/cards";
 
 const cardCountSelector = createSelector(
   (state) => state.cards.data,
@@ -49,7 +23,6 @@ const cardCountSelector = createSelector(
 );
 
 const SliderInput = ({ value, setValue, length, ...props }) => {
-  const classes = useStyles();
   const [valueState, setValueState] = useState();
   const cardsLength = useSelector(cardCountSelector);
 
@@ -68,9 +41,14 @@ const SliderInput = ({ value, setValue, length, ...props }) => {
   };
 
   return (
-    <Paper className={classes.input}>
+    <Paper
+      css={{
+        padding: `0 ${theme.spacing(1)}`,
+
+        maxWidth: 70,
+      }}
+    >
       <InputBase
-        className={classes.inputBase}
         inputProps={{
           min: 1,
           max: length,
@@ -86,7 +64,6 @@ const SliderInput = ({ value, setValue, length, ...props }) => {
 
 // card range slider that can be seen on the right side of the screen
 const Range = () => {
-  const classes = useStyles();
   const dispatch = useDispatch();
 
   const testing = useSelector(testingSelector); // slider disabled in edit mode
@@ -136,7 +113,14 @@ const Range = () => {
           </IconButton>
         </span>
       </Tooltip>
-      <Box className={classes.range}>
+      <Box
+        css={{
+          display: "flex",
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <SliderInput
           length={cardsLength}
           value={rangeState[0]}
@@ -144,12 +128,16 @@ const Range = () => {
           disabled={testing}
         />
         <Slider
+          size="small"
           value={rangeState}
           min={1}
           max={cardsLength}
           onChange={handleSetRange}
           valueLabelDisplay="off"
-          className={classes.slider}
+          css={{
+            width: "100%",
+            margin: `0 ${theme.spacing(2)}`,
+          }}
           disabled={testing}
         />
 

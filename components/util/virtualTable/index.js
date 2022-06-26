@@ -1,61 +1,63 @@
 import { memo } from "react";
 import clsx from "clsx";
 
-import { Box } from '@material-ui/core'
-import { makeStyles } from "@material-ui/core/styles";
+import { Box } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 
 import { AutoSizer, Column, Table } from "react-virtualized";
 
 import { CharRenderer, GraphRenderer, TimeRenderer } from "./cellRenderer";
 import HeaderRenderer from "./headerRenderer";
 
-export const useTableStyles = makeStyles(theme => ({
+import theme from "../../../util/theme";
+
+export const useTableStyles = makeStyles((theme) => ({
   flexContainer: {
     display: "flex",
     alignItems: "center",
-    boxSizing: "border-box"
+    boxSizing: "border-box",
   },
   table: {
     // temporary right-to-left patch, waiting for
     // https://github.com/bvaughn/react-virtualized/issues/454
     "& .ReactVirtualized__Table__headerRow": {
       flip: false,
-      paddingRight: theme.direction === "rtl" ? "0px !important" : undefined
+      paddingRight: theme.direction === "rtl" ? "0px !important" : undefined,
     },
-    '& .ReactVirtualized__Table__rowColumn': {
-      height: 'inherit',
+    "& .ReactVirtualized__Table__rowColumn": {
+      height: "inherit",
     },
-    '& .ReactVirtualized__Table__row:hover': {
-      background: theme.palette.background.paper
-    }
+    "& .ReactVirtualized__Table__row:hover": {
+      background: theme.palette.background.paper,
+    },
   },
   tableRow: {
     cursor: "default",
-    userSelect: 'none',
-    display: 'flex',
+    userSelect: "none",
+    display: "flex",
   },
   numeric: {
-    justifyContent: 'flex-end'
+    justifyContent: "flex-end",
   },
   tableRowHover: {
     "&:hover": {
-      backgroundColor: theme.palette.grey[200]
-    }
+      backgroundColor: theme.palette.grey[200],
+    },
   },
   tableCell: {
     borderBottom: 0,
-    height: 'inherit'
+    height: "inherit",
   },
   noClick: {
-    cursor: "initial"
+    cursor: "initial",
   },
   empty: {
     color: theme.palette.grey[200],
-    fontSize: "2em"
+    fontSize: "2em",
   },
   index: {
-    paddingRight: 0
-  }
+    paddingRight: 0,
+  },
 }));
 
 const VirtualTable = ({ headerHeight = 48, rowHeight = 48, ...props }) => {
@@ -65,7 +67,7 @@ const VirtualTable = ({ headerHeight = 48, rowHeight = 48, ...props }) => {
 
   const getRowClassName = ({ index }) => {
     return clsx(classes.tableRow, classes.flexContainer, {
-      [classes.tableRowHover]: index !== -1 && onRowClick != null
+      [classes.tableRowHover]: index !== -1 && onRowClick != null,
     });
   };
 
@@ -75,47 +77,65 @@ const VirtualTable = ({ headerHeight = 48, rowHeight = 48, ...props }) => {
         <Table
           height={height}
           width={width}
-
           headerHeight={headerHeight}
           rowHeight={rowHeight}
-
-          className={classes.table}
+          css={{
+            // temporary right-to-left patch, waiting for
+            // https://github.com/bvaughn/react-virtualized/issues/454
+            "& .ReactVirtualized__Table__headerRow": {
+              flip: false,
+              paddingRight:
+                theme.direction === "rtl" ? "0px !important" : undefined,
+            },
+            "& .ReactVirtualized__Table__rowColumn": {
+              height: "inherit",
+            },
+            "& .ReactVirtualized__Table__row:hover": {
+              background: theme.palette.background.paper,
+            },
+          }}
+          // className={classes.table}
           rowClassName={getRowClassName}
           gridStyle={{
-            direction: "inherit"
+            direction: "inherit",
           }}
           {...tableProps}
         >
           <Column
             cellDataGetter={({ rowData }) => rowData.character}
-            headerRenderer={headerProps => <HeaderRenderer {...headerProps} />}
-            cellRenderer={cellProps => <CharRenderer {...cellProps} />}
+            headerRenderer={(headerProps) => (
+              <HeaderRenderer {...headerProps} />
+            )}
+            cellRenderer={(cellProps) => <CharRenderer {...cellProps} />}
             width={headerHeight}
           />
           <Column
             dataKey="Statistics"
             flexGrow={1}
-            cellDataGetter={({ rowData: { index, character, time, ...graphData }, isScrolling }) => 
-              ({ 
-                ...graphData,
-                size: {
-                  width: 250, // TODO: 250 is hardcoded, make this variable
-                  height: rowHeight
-                },
-                isScrolling
-              })
-            }
-            headerRenderer={headerProps => <HeaderRenderer {...headerProps} />}
-            cellRenderer={cellProps => (
-              <GraphRenderer {...cellProps} />
+            cellDataGetter={({
+              rowData: { index, character, time, ...graphData },
+              isScrolling,
+            }) => ({
+              ...graphData,
+              size: {
+                width: 250, // TODO: 250 is hardcoded, make this variable
+                height: rowHeight,
+              },
+              isScrolling,
+            })}
+            headerRenderer={(headerProps) => (
+              <HeaderRenderer {...headerProps} />
             )}
+            cellRenderer={(cellProps) => <GraphRenderer {...cellProps} />}
             width={250}
           />
           <Column
             dataKey="Time"
             cellDataGetter={({ rowData }) => rowData.time}
-            headerRenderer={headerProps => <HeaderRenderer {...headerProps} />}
-            cellRenderer={cellProps => <TimeRenderer {...cellProps} />}
+            headerRenderer={(headerProps) => (
+              <HeaderRenderer {...headerProps} />
+            )}
+            cellRenderer={(cellProps) => <TimeRenderer {...cellProps} />}
             width={100}
           />
         </Table>

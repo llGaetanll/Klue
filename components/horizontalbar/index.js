@@ -12,66 +12,41 @@ import {
   DialogContentText,
   DialogActions,
   Divider as MuiDivider,
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+} from "@mui/material";
 
-import GetAppIcon from "@material-ui/icons/GetApp";
-import PublishIcon from "@material-ui/icons/Publish";
-import SettingsIcon from "@material-ui/icons/Settings";
-import EditIcon from "@material-ui/icons/Edit";
-import SaveIcon from "@material-ui/icons/Save";
-import DoneAllIcon from "@material-ui/icons/DoneAll";
-import DoneIcon from "@material-ui/icons/Done";
-import CancelIcon from "@material-ui/icons/Close";
+import GetAppIcon from "@mui/icons-material/GetApp";
+import PublishIcon from "@mui/icons-material/Publish";
+import SettingsIcon from "@mui/icons-material/Settings";
+import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import DoneIcon from "@mui/icons-material/Done";
+import CancelIcon from "@mui/icons-material/Close";
 
 import UploadButton from "../util/uploadButton";
 
 import { getCards, setMode, testDoneSelector } from "../../src/cards";
 import { FeedbackContext } from "../../util/feedback";
 
-import Range from "../range";
-import Settings from "../settings";
+import Range from "./range";
+import Settings from "./settings";
 
-const useStyles = makeStyles((theme) => ({
-  horizontalbar: {
-    display: "flex",
-    alignItems: "center",
-    height: 64,
+import theme from "../../util/theme";
 
-    padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-  },
-  wrapper: {
-    overflow: "auto",
-  },
-  mode: {
-    paddingRight: theme.spacing(2),
-
-    fontFamily: "monospace",
-    fontWeight: 800,
-    fontSize: 20,
-  },
-  divider: {
-    margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
-  },
-}));
-
-const Divider = () => {
-  const classes = useStyles();
-
-  return (
-    <MuiDivider
-      className={classes.divider}
-      orientation="vertical"
-      variant="middle"
-      flexItem
-    />
-  );
-};
+const Divider = () => (
+  <MuiDivider
+    css={{
+      margin: `${theme.spacing(1)} ${theme.spacing(1)}`,
+    }}
+    orientation="vertical"
+    variant="middle"
+    flexItem
+  />
+);
 
 // Additional buttons in the bottom bar
 // Upload, Download, Settings...
 const Misc = () => {
-  const classes = useStyles();
   const dispatch = useDispatch();
 
   const { setDialog } = useContext(FeedbackContext);
@@ -82,11 +57,7 @@ const Misc = () => {
   return (
     <>
       <Tooltip title="Download Cards">
-        <IconButton
-          color="primary"
-          className={classes.button}
-          onClick={handleDownload}
-        >
+        <IconButton color="primary" onClick={handleDownload}>
           <GetAppIcon />
         </IconButton>
       </Tooltip>
@@ -100,11 +71,7 @@ const Misc = () => {
       </UploadButton>
 
       <Tooltip title="Settings">
-        <IconButton
-          color="primary"
-          className={classes.button}
-          onClick={handleSettings}
-        >
+        <IconButton color="primary" onClick={handleSettings}>
           <SettingsIcon />
         </IconButton>
       </Tooltip>
@@ -129,15 +96,31 @@ const CancelTest = ({ onClose }) => (
 );
 
 const NormalBar = () => {
-  const classes = useStyles();
   const dispatch = useDispatch();
 
   const handleEdit = () => dispatch(setMode("edit"));
   const handleTest = () => dispatch(setMode("test"));
 
   return (
-    <Box className={classes.horizontalbar}>
-      <Typography variant="h5" className={classes.mode}>
+    <Box
+      css={{
+        display: "flex",
+        alignItems: "center",
+        height: 64,
+
+        padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
+      }}
+    >
+      <Typography
+        variant="h5"
+        css={{
+          paddingRight: theme.spacing(2),
+
+          fontFamily: "monospace",
+          fontWeight: 800,
+          fontSize: 20,
+        }}
+      >
         NORMAL
       </Typography>
 
@@ -147,7 +130,7 @@ const NormalBar = () => {
         color="primary"
         onClick={handleEdit}
         startIcon={<EditIcon />}
-        style={{ whiteSpace: "nowrap" }}
+        css={{ whiteSpace: "nowrap" }}
       >
         Edit
       </Button>
@@ -156,7 +139,7 @@ const NormalBar = () => {
         color="primary"
         onClick={handleTest}
         startIcon={<DoneAllIcon />}
-        style={{ whiteSpace: "nowrap" }}
+        css={{ whiteSpace: "nowrap" }}
       >
         Test
       </Button>
@@ -171,14 +154,30 @@ const NormalBar = () => {
 };
 
 const EditBar = () => {
-  const classes = useStyles();
   const dispatch = useDispatch();
 
   const handleNormal = () => dispatch(setMode("normal"));
 
   return (
-    <Box className={classes.horizontalbar}>
-      <Typography variant="h5" className={classes.mode}>
+    <Box
+      css={{
+        display: "flex",
+        alignItems: "center",
+        height: 64,
+
+        padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
+      }}
+    >
+      <Typography
+        variant="h5"
+        css={{
+          paddingRight: theme.spacing(2),
+
+          fontFamily: "monospace",
+          fontWeight: 800,
+          fontSize: 20,
+        }}
+      >
         EDIT
       </Typography>
 
@@ -188,7 +187,7 @@ const EditBar = () => {
         color="primary"
         onClick={handleNormal}
         startIcon={<SaveIcon />}
-        style={{ whiteSpace: "nowrap" }}
+        css={{ whiteSpace: "nowrap" }}
       >
         Save
       </Button>
@@ -201,7 +200,6 @@ const EditBar = () => {
 };
 
 const TestBar = () => {
-  const classes = useStyles();
   const dispatch = useDispatch();
 
   const { setDialog } = useContext(FeedbackContext);
@@ -214,8 +212,25 @@ const TestBar = () => {
   const testDone = useSelector(testDoneSelector);
 
   return (
-    <Box className={classes.horizontalbar}>
-      <Typography variant="h5" className={classes.mode}>
+    <Box
+      css={{
+        display: "flex",
+        alignItems: "center",
+        height: 64,
+
+        padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
+      }}
+    >
+      <Typography
+        variant="h5"
+        css={{
+          paddingRight: theme.spacing(2),
+
+          fontFamily: "monospace",
+          fontWeight: 800,
+          fontSize: 20,
+        }}
+      >
         TEST
       </Typography>
 
@@ -226,7 +241,7 @@ const TestBar = () => {
           color="primary"
           onClick={handleNormal}
           startIcon={<DoneIcon />}
-          style={{ whiteSpace: "nowrap" }}
+          css={{ whiteSpace: "nowrap" }}
         >
           Done
         </Button>
@@ -235,7 +250,7 @@ const TestBar = () => {
           color="primary"
           onClick={handleCancel}
           startIcon={<CancelIcon />}
-          style={{ whiteSpace: "nowrap" }}
+          css={{ whiteSpace: "nowrap" }}
         >
           Exit
         </Button>
@@ -253,10 +268,9 @@ const BAR = {
 
 // the bar changes depending on the state of the program.
 export const HorizontalBar = () => {
-  const classes = useStyles();
   const mode = useSelector((state) => state.cards.mode);
 
   const bar = BAR[mode];
 
-  return <Box className={classes.wrapper}>{bar}</Box>;
+  return <Box css={{ overflow: "auto" }}>{bar}</Box>;
 };

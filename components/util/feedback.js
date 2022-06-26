@@ -1,51 +1,35 @@
 import { useState, useEffect, cloneElement } from "react";
-import MuiAlert from "@material-ui/lab/Alert";
+import MuiAlert from "@mui/material/Alert";
 import {
   Box,
   Snackbar,
   Dialog as MuiDialog,
-  Menu as MuiMenu
-} from "@material-ui/core";
-
-import { makeStyles } from "@material-ui/core/styles";
+  Menu as MuiMenu,
+} from "@mui/material";
 
 import { isEmptyObj } from "../../util";
 
-const useStyles = makeStyles(theme => ({
-  alertList: {
-    display: "inline-flex",
-    flexDirection: "column-reverse",
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-
-    marginBottom: 48 // account for bottom tab
-  },
-  alert: {
-    position: "relative",
-    margin: theme.spacing(2),
-    marginTop: 0,
-
-    transitionDuration: "0.5s",
-    transform: "none", // undo styles applied by MUI
-    left: 0,
-    bottom: 0
-  }
-}));
-
 export const AlertList = ({ alerts, remAlert }) => {
-  const classes = useStyles();
-
   // this list contains all currently visible alerts.
   // it's updated whenever the context's alert change
-  const alertList = Object.keys(alerts).map(key => ({
+  const alertList = Object.keys(alerts).map((key) => ({
     ...alerts[key],
-    alertKey: key
+    alertKey: key,
   }));
 
   return (
-    <Box className={classes.alertList}>
-      {alertList.map(alert => (
+    <Box
+      css={{
+        display: "inline-flex",
+        flexDirection: "column-reverse",
+        position: "absolute",
+        bottom: 0,
+        right: 0,
+
+        marginBottom: 48, // account for bottom tab
+      }}
+    >
+      {alertList.map((alert) => (
         <Alert key={alert.alertKey} remAlert={remAlert} {...alert} />
       ))}
     </Box>
@@ -53,7 +37,6 @@ export const AlertList = ({ alerts, remAlert }) => {
 };
 
 export const Alert = ({ alertKey: key, msg, severity, remAlert, params }) => {
-  const classes = useStyles();
   const [open, setOpen] = useState(true);
 
   const handleClose = (event, reason) => {
@@ -74,7 +57,16 @@ export const Alert = ({ alertKey: key, msg, severity, remAlert, params }) => {
       autoHideDuration={lifetimeMS}
       onClose={handleClose}
       onExited={handleExited}
-      className={classes.alert}
+      css={{
+        position: "relative",
+        margin: theme.spacing(2),
+        marginTop: 0,
+
+        transitionDuration: "0.5s",
+        transform: "none", // undo styles applied by MUI
+        left: 0,
+        bottom: 0,
+      }}
     >
       <MuiAlert elevation={3} variant="filled" severity={severity}>
         {msg}
@@ -91,7 +83,7 @@ export const Dialog = ({ children, onClose, remDialog }) => {
     setOpen(Boolean(children && !isEmptyObj(children)));
   }, [children]);
 
-  const handleClose = event => {
+  const handleClose = (event) => {
     setOpen(false);
 
     onClose(event);
@@ -121,7 +113,7 @@ export const Menu = ({ anchor, children, onClose, remMenu }) => {
     setOpen(Boolean(anchor));
   }, [anchor]);
 
-  const handleClose = event => {
+  const handleClose = (event) => {
     setOpen(false);
 
     onClose(event);

@@ -1,8 +1,7 @@
 import dynamic from "next/dynamic";
 import { useSelector } from "react-redux";
 
-import { Box } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { Box } from "@mui/material";
 
 import Sidebar from "../components/sidebar/index";
 import { HorizontalBar } from "../components/horizontalbar";
@@ -16,22 +15,6 @@ import TestContent from "../components/views/test";
 
 const Load = dynamic(() => import("./load"));
 
-const useStyles = makeStyles({
-  content: {
-    display: "flex",
-    flexDirection: "row",
-    flex: 1,
-  },
-  card: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-
-    flex: 2,
-  },
-});
-
 // content of the page depends on app mode
 const CONTENT = {
   normal: <NormalContent />,
@@ -40,8 +23,6 @@ const CONTENT = {
 };
 
 const Index = () => {
-  const classes = useStyles();
-
   const cards = useSelector((state) => state.cards.data);
 
   if (cards.length < 1) return <Load />;
@@ -53,7 +34,13 @@ const Index = () => {
   return (
     <Box display="flex" flex={1} flexDirection="column">
       <KeyBinds />
-      <Box className={classes.content}>
+      <Box
+        css={{
+          display: "flex",
+          flexDirection: "row",
+          flex: 1,
+        }}
+      >
         <Sidebar />
         {content}
       </Box>

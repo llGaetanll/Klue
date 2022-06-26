@@ -9,22 +9,16 @@ import {
   FormControlLabel,
   DialogTitle,
   DialogContent,
-  DialogActions
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+  DialogActions,
+} from "@mui/material";
 
+import { setRepeat, setAutoAdvance, getCards } from "../../src/cards";
 import {
-  setRepeat,
-  setAutoAdvance,
-  getCards,
-} from "../src/cards";
-import { toggleTheme, toggleIndex, toggleWeight, darkSelector } from "../src/settings";
-
-const useStyles = makeStyles(theme => ({
-  sectionTitle: {
-    // fontSize: '2em'
-  }
-}));
+  toggleTheme,
+  toggleIndex,
+  toggleWeight,
+  darkSelector,
+} from "../../src/settings";
 
 const UploadWarning = ({ onClose }) => {
   const dispatch = useDispatch();
@@ -54,17 +48,16 @@ const UploadWarning = ({ onClose }) => {
   );
 };
 
-const Settings = props => {
-  const classes = useStyles();
+const Settings = (props) => {
   const dispatch = useDispatch();
 
-  const testing = useSelector(state => state.cards.test);
+  const testing = useSelector((state) => state.cards.test);
 
   // const isDark = useSelector(darkSelector);
-  const repeatCards = useSelector(state => state.cards.repeat);
-  const autoAdvance = useSelector(state => state.cards.autoAdvance);
-  const showIndex = useSelector(state => state.settings.showIndex);
-  const showWeight = useSelector(state => state.settings.showWeight);
+  const repeatCards = useSelector((state) => state.cards.repeat);
+  const autoAdvance = useSelector((state) => state.cards.autoAdvance);
+  const showIndex = useSelector((state) => state.settings.showIndex);
+  const showWeight = useSelector((state) => state.settings.showWeight);
 
   // const handleTheme = () => dispatch(toggleTheme());
   const handleRepeat = () => dispatch(setRepeat(!repeatCards));
@@ -77,7 +70,9 @@ const Settings = props => {
       <DialogTitle>Settings</DialogTitle>
       <DialogContent>
         <Box display="flex" flexDirection="column">
-          <Typography component="h1" variant="caption" className={classes.sectionTitle}>Test Mode</Typography>
+          <Typography component="h1" variant="caption">
+            Test Mode
+          </Typography>
           <FormControlLabel
             control={
               <Switch
@@ -117,7 +112,9 @@ const Settings = props => {
             }
             label="Dark Theme"
           /> */}
-          <Typography component="h1" variant="caption" className={classes.sectionTitle}>Edit Mode</Typography>
+          <Typography component="h1" variant="caption">
+            Edit Mode
+          </Typography>
           <FormControlLabel
             control={
               <Switch

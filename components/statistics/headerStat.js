@@ -1,44 +1,43 @@
-import {
-  Box,
-  Typography,
-} from "@material-ui/core";
+import { Box, Typography } from "@mui/material";
 
-import { makeStyles } from '@material-ui/core/styles'
-
-const useStyles = makeStyles(theme => ({
-  headerStat: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-
-    margin: theme.spacing(2)
-  },
-  title: {
-    fontSize: '1em',
-    fontWeight: 500,
-    userSelect: 'none'
-  },
-  number: ({ color }) => ({
-    fontSize: '3em',
-    fontWeight: 300,
-    display: 'flex',
-    flexDirection: 'row',
-
-    fontFamily: 'monospace',
-    lineHeight: 1.2,
-    color: color(theme)
-  })
-}))
+import theme from "../../util/theme";
 
 const HeaderStat = ({ title, color = () => {}, children, ...props }) => {
-  const classes = useStyles({ color });
+  // const classes = useStyles({ color });
 
   return (
-    <Box className={classes.headerStat} {...props}>
-      <Typography component="h2" className={classes.title}>{title}</Typography>
-      {children(classes.number)}
+    <Box
+      css={{
+        display: "flex",
+        flex: 1,
+        flexDirection: "column",
+
+        margin: theme.spacing(2),
+      }}
+      {...props}
+    >
+      <Typography
+        component="h2"
+        css={{
+          fontSize: "1em",
+          fontWeight: 500,
+          userSelect: "none",
+        }}
+      >
+        {title}
+      </Typography>
+      {children({
+        fontSize: "3em",
+        fontWeight: 300,
+        display: "flex",
+        flexDirection: "row",
+
+        fontFamily: "monospace",
+        lineHeight: 1.2,
+        color: color(theme),
+      })}
     </Box>
-  )
-}
+  );
+};
 
 export default HeaderStat;

@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 
-import { Box } from "@material-ui/core";
+import { Box } from "@mui/material";
 
 import { EndOfTest } from "../statistics";
 

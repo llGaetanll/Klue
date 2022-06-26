@@ -1,17 +1,11 @@
 import { useEffect, useRef } from "react";
 
-import { Box, Typography, TextField as MuiTextField } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { Typography, TextField as MuiTextField } from "@mui/material";
 
-const useFieldStyles = makeStyles((theme) => ({
-  editTextField: {
-    margin: theme.spacing(1),
-  },
-}));
+import theme from "../../util/theme";
 
 // text field component
 const TextField = ({ display, edit, value, setValue, ...props }) => {
-  const classes = useFieldStyles(); // default styles for every field
   const inputRef = useRef();
 
   const {
@@ -31,7 +25,9 @@ const TextField = ({ display, edit, value, setValue, ...props }) => {
   if (edit)
     return (
       <MuiTextField
-        className={classes.editTextField}
+        css={{
+          margin: theme.spacing(1),
+        }}
         onChange={handleEdit}
         value={value || ""}
         inputRef={inputRef}
@@ -41,11 +37,7 @@ const TextField = ({ display, edit, value, setValue, ...props }) => {
 
   if (!display) return <></>;
 
-  return (
-    <Typography className={classes.textField} {...textFieldProps}>
-      {value}
-    </Typography>
-  );
+  return <Typography {...textFieldProps}>{value}</Typography>;
 };
 
 export default TextField;

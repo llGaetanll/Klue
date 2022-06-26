@@ -2,11 +2,11 @@ import { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "@reduxjs/toolkit";
 
-import { Paper, Button as MuiButton, IconButton } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { Paper, Button as MuiButton, IconButton } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 import {
   next,
@@ -17,6 +17,8 @@ import {
   testingSelector,
   editSelector,
 } from "../../src/cards";
+
+import theme from "../../util/theme";
 
 const useStyles = makeStyles((theme) => ({
   options: {
@@ -73,7 +75,13 @@ const TestOptions = () => {
   if (!test) return <></>;
 
   return (
-    <Paper className={classes.options}>
+    <Paper
+      css={{
+        display: "flex",
+
+        marginTop: theme.spacing(2),
+      }}
+    >
       {!edit ? (
         <>
           {/* <IconButton
@@ -86,21 +94,21 @@ const TestOptions = () => {
           </IconButton> */}
           <Button
             disabled={cardIndex < range[0] || cardIndex > range[1]}
-            className={classes.option}
+            css={{ flex: 1 }}
             onClick={() => handleDiff("easy")}
           >
             Easy
           </Button>
           <Button
             disabled={cardIndex < range[0] || cardIndex > range[1]}
-            className={classes.option}
+            css={{ flex: 1 }}
             onClick={() => handleDiff("medium")}
           >
             Medium
           </Button>
           <Button
             disabled={cardIndex < range[0] || cardIndex > range[1]}
-            className={classes.option}
+            css={{ flex: 1 }}
             onClick={() => handleDiff("hard")}
           >
             Hard
@@ -108,10 +116,10 @@ const TestOptions = () => {
         </>
       ) : (
         <>
-          <IconButton className={classes.option} onClick={handleBackward}>
+          <IconButton css={{ flex: 1 }} onClick={handleBackward}>
             <ArrowBackIosIcon fontSize="small" />
           </IconButton>
-          <IconButton className={classes.option} onClick={handleForward}>
+          <IconButton css={{ flex: 1 }} onClick={handleForward}>
             <ArrowForwardIosIcon fontSize="small" />
           </IconButton>
         </>

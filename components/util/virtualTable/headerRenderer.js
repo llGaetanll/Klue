@@ -1,8 +1,8 @@
 import clsx from "clsx";
 
-import { TableCell } from "@material-ui/core";
+import { TableCell } from "@mui/material";
 
-import { useTableStyles } from './index';
+import { useTableStyles } from "./index";
 
 // render the header of each colum (single, ao5, ao12)
 const HeaderRenderer = ({ dataKey }) => {

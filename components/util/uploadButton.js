@@ -1,32 +1,20 @@
 import { useContext } from "react";
-import { useDispatch } from 'react-redux';
-
-import { makeStyles } from "@material-ui/core/styles";
+import { useDispatch } from "react-redux";
 
 import { FeedbackContext } from "../../util/feedback";
 import { setCards } from "../../src/cards";
 
-const useStyles = makeStyles(theme => ({
-  input: {
-    display: "none"
-  },
-  button: {
-    whiteSpace: "nowrap" // text spans one line
-  }
-}));
-
 const UploadButton = ({ children }) => {
-  const classes = useStyles();
   const dispatch = useDispatch();
 
   const { addAlert } = useContext(FeedbackContext);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
 
     // file reading finished successfully
-    reader.addEventListener("load", e => {
+    reader.addEventListener("load", (e) => {
       // contents of file in variable
       var text = e.target.result;
 
@@ -35,7 +23,7 @@ const UploadButton = ({ children }) => {
     });
 
     // file reading failed
-    reader.addEventListener("error", function() {
+    reader.addEventListener("error", function () {
       addAlert("Failed to read file", "error");
     });
 
@@ -44,10 +32,10 @@ const UploadButton = ({ children }) => {
   };
 
   return (
-    <div className={classes.root}>
+    <div>
       <input
         accept="application/JSON"
-        className={classes.input}
+        css={{ display: "none" }}
         id="contained-button-file"
         type="file"
         onChange={handleChange}

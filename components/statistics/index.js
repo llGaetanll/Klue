@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
-import { Box, Button, Typography } from "@material-ui/core";
+import { Box, Button, Typography } from "@mui/material";
 
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@mui/styles";
 
 import HeaderStat from "./headerStat";
 import VirtualTable from "../util/virtualTable";
@@ -74,13 +74,13 @@ export const EndOfTest = () => {
 
       <Box className={classes.header}>
         <HeaderStat title="Total Time">
-          {(className) => (
-            <Time time={formatTime(totalTime, false)} className={className} />
+          {(styles) => (
+            <Time time={formatTime(totalTime, false)} styles={styles} />
           )}
         </HeaderStat>
         <HeaderStat title="Average Time">
-          {(className) => (
-            <Time time={formatTime(round(avgTime, 0))} className={className} />
+          {(styles) => (
+            <Time time={formatTime(round(avgTime, 0))} styles={styles} />
           )}
         </HeaderStat>
         <HeaderStat
@@ -91,8 +91,8 @@ export const EndOfTest = () => {
               : theme.palette.error.dark
           }
         >
-          {(className) => (
-            <Typography component="h1" className={className}>
+          {(styles) => (
+            <Typography component="h1" style={styles}>
               {avgWeightDelta > 0
                 ? `+${round(avgWeightDelta, 3)}`
                 : `${round(avgWeightDelta, 3)}`}

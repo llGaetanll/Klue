@@ -2,42 +2,11 @@ import { useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { motion } from "framer-motion";
 
-import { Box, Typography, Tooltip } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { Box, Typography, Tooltip } from "@mui/material";
 
 import { colorSelector, testingSelector, setIndex } from "../../src/cards";
 
-const useStyles = makeStyles((theme) => ({
-  dots: {
-    flex: 1,
-    width: 550, // TODO: width should use @media tags
-    display: "flex",
-
-    flexWrap: "wrap",
-    gap: "7px", // TODO: this version of MUI is too old and doesn't support flex gap natively
-
-    marginRight: -3,
-    padding: theme.spacing(2),
-    paddingTop: 0,
-  },
-  bar: {
-    display: "flex",
-
-    padding: `0 ${theme.spacing(2)}px`,
-  },
-  cardInfo: {
-    fontFamily: "monospace",
-    fontWeight: 500,
-    lineHeight: "initial",
-
-    padding: theme.spacing(1),
-  },
-  button: ({ open }) => ({
-    padding: theme.spacing(1),
-
-    transform: `rotate(${open ? 0.5 : 0}turn)`,
-  }),
-}));
+import theme from "../../util/theme";
 
 // control the size of the dot based on if it's selected or not
 const variants = {
@@ -82,7 +51,6 @@ const Item = ({ index, handleClick }) => {
 
 // dot grid. only rerenders when cardset size changes
 const Dots = () => {
-  const classes = useStyles();
   const dispatch = useDispatch();
 
   const length = useSelector((state) => state.cards.data.length);
@@ -96,7 +64,20 @@ const Dots = () => {
 
   return useMemo(
     () => (
-      <Box className={classes.dots}>
+      <Box
+        css={{
+          flex: 1,
+          width: 550, // TODO: width should use @media tags
+          display: "flex",
+
+          flexWrap: "wrap",
+          gap: 7,
+
+          marginRight: -3,
+          padding: theme.spacing(2),
+          paddingTop: 0,
+        }}
+      >
         {Array.from({ length }).map((_, i) => (
           <Item index={i} key={`dot-${i}`} handleClick={handleClick} />
         ))}
@@ -106,7 +87,7 @@ const Dots = () => {
   );
 };
 
-const useStatStyles = makeStyles((theme) => ({
+const statStyles = {
   bar: {
     display: "flex",
     flexDirection: "row",
@@ -117,7 +98,7 @@ const useStatStyles = makeStyles((theme) => ({
     flexDirection: "row",
     alignItems: "center",
 
-    margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+    margin: `${theme.spacing(1)} ${theme.spacing(2)}`,
   },
   number: {
     fontSize: "1.8em",
@@ -133,13 +114,13 @@ const useStatStyles = makeStyles((theme) => ({
 
     marginRight: theme.spacing(1),
   },
-  value: {},
-}));
+  value: {
+    fontWeight: 400,
+  },
+};
 
 // appears above dot grid
 const CardStats = () => {
-  const classes = useStatStyles();
-
   const index = useSelector((state) => state.cards.index);
   const weight = useSelector((state) => state.cards.data[index]?.weight);
   const numCards = useSelector(
@@ -155,24 +136,24 @@ const CardStats = () => {
   const testing = useSelector(testingSelector);
 
   return (
-    <Box className={classes.bar}>
+    <Box css={statStyles.bar}>
       {!testing && showIndex && (
-        <Box className={classes.section}>
-          <Typography className={classes.number}>#</Typography>
-          <Typography className={classes.value}>{index + 1}</Typography>
+        <Box css={statStyles.section}>
+          <Typography css={statStyles.number}>#</Typography>
+          <Typography css={statStyles.value}>{index + 1}</Typography>
         </Box>
       )}
-      <Box className={classes.section}>
-        <Typography className={classes.key}>Range</Typography>
-        <Typography className={classes.value}>
+      <Box css={statStyles.section}>
+        <Typography css={statStyles.key}>Range</Typography>
+        <Typography css={statStyles.value}>
           {numCards}/{cardCount}
         </Typography>
       </Box>
       {!testing && showWeight && weight && (
-        <Box className={classes.section}>
-          <Typography className={classes.key}>Weight</Typography>
+        <Box css={statStyles.section}>
+          <Typography css={statStyles.key}>Weight</Typography>
           <Tooltip title={weight}>
-            <Typography className={classes.value} style={{ color }}>
+            <Typography css={[statStyles.value, { color }]}>
               {weight.toFixed(3)}
             </Typography>
           </Tooltip>
