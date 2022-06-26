@@ -90,24 +90,4 @@ const Card = () => {
   );
 };
 
-export const DisplayCard = ({ index }) => {
-  const { character, meaning, notes, weight } = useSelector(
-    createSelector(
-      (state) => state.cards.data,
-      (cards) => {
-        const { char: character, meaning, notes, weight } = cards[index];
-
-        return {
-          character,
-          meaning,
-          notes,
-          weight,
-        };
-      }
-    )
-  );
-
-  return <MuiCard></MuiCard>;
-};
-
 export default Card;
