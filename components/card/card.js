@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 
 import { Typography, Box, Card as MuiCard, CardContent } from "@mui/material";
 
-import TextField from "./TextField";
+import TextField from "./textField";
 import { cardContent, editSelector } from "../../src/cards";
 
 // actual card component

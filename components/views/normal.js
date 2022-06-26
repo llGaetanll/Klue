@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 
-import Card from "../card/Card";
+import Card from "../card/card";
 
 // what the page looks like in normal mode
 const Normal = () => (
