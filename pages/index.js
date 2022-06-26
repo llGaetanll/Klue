@@ -25,11 +25,11 @@ const CONTENT = {
 const Index = () => {
   const cards = useSelector((state) => state.cards.data);
 
-  if (cards.length < 1) return <Load />;
-
   // mode is used to determine the state of the program
   const mode = useSelector((state) => state.cards.mode);
   const content = CONTENT[mode];
+
+  if (cards.length < 1) return <Load />;
 
   return (
     <Box display="flex" flex={1} flexDirection="column">

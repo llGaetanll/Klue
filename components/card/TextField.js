@@ -20,7 +20,7 @@ const TextField = ({ display, edit, value, setValue, ...props }) => {
     if (edit && focus) {
       inputRef.current.focus();
     }
-  }, [edit, display]);
+  }, [edit, focus]);
 
   if (edit)
     return (

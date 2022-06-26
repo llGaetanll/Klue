@@ -56,14 +56,14 @@ const Dots = () => {
   const length = useSelector((state) => state.cards.data.length);
   const test = useSelector(testingSelector);
 
-  // when the user clicks on the dot, the index is
-  // drilled up and setIndex is conditionally dispatched
-  const handleClick = (index) => {
-    if (!test) dispatch(setIndex(index));
-  };
+  return useMemo(() => {
+    // when the user clicks on the dot, the index is
+    // drilled up and setIndex is conditionally dispatched
+    const handleClick = (index) => {
+      if (!test) dispatch(setIndex(index));
+    };
 
-  return useMemo(
-    () => (
+    return (
       <Box
         css={{
           flex: 1,
@@ -82,9 +82,8 @@ const Dots = () => {
           <Item index={i} key={`dot-${i}`} handleClick={handleClick} />
         ))}
       </Box>
-    ),
-    [length]
-  );
+    );
+  }, [length, test, dispatch]);
 };
 
 const statStyles = {

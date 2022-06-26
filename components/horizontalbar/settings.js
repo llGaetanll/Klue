@@ -34,14 +34,14 @@ const UploadWarning = ({ onClose }) => {
       <DialogContent>
         <Typography>
           Uploading a new set of cards will override the current one. Consider
-          downloading this card set if you haven't already.
+          downloading this card set if you {"haven't"} already.
         </Typography>
 
         <DialogActions>
           <Button onClick={handleDownload} color="primary">
             Download Cards
           </Button>
-          <Button onClick={onClose}>I know what I'm doing</Button>
+          <Button onClick={onClose}>I know what {"I'm"} doing</Button>
         </DialogActions>
       </DialogContent>
     </>
