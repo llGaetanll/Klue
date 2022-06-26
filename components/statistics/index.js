@@ -3,7 +3,7 @@ import { Box, Button, Typography } from "@mui/material";
 
 import { makeStyles } from "@mui/styles";
 
-import HeaderStat from "./headerStat";
+import HeaderStat from "./headerstat";
 import VirtualTable from "../util/virtualTable";
 import Time from "../util/time";
 

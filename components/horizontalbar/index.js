@@ -23,7 +23,7 @@ import DoneAllIcon from "@mui/icons-material/DoneAll";
 import DoneIcon from "@mui/icons-material/Done";
 import CancelIcon from "@mui/icons-material/Close";
 
-import UploadButton from "../util/uploadButton";
+import UploadButton from "../util/uploadbutton";
 
 import { getCards, setMode, testDoneSelector } from "../../src/cards";
 import { FeedbackContext } from "../../util/feedback";
