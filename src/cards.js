@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-import { interpolateLab } from "https://cdn.skypack.dev/d3-interpolate@3";
+import { interpolateLab } from "d3-interpolate";
 import { isEqual } from "lodash";
 import FileSaver from "file-saver";
 import seedrandom from "seedrandom";
