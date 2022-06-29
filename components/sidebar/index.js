@@ -66,9 +66,9 @@ const Dots = () => {
     return (
       <Box
         css={{
-          flex: 1,
+          // flex: 1,
           width: 550, // TODO: width should use @media tags
-          display: "flex",
+          display: "inline-flex",
 
           flexWrap: "wrap",
           gap: 7,
