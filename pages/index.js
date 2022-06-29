@@ -39,6 +39,7 @@ const Index = () => {
           display: "flex",
           flexDirection: "row",
           flex: 1,
+          height: "100vh",
         }}
       >
         <Sidebar />

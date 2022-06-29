@@ -8,14 +8,18 @@ import TextField from "./TextField";
 import { cardContent, editSelector } from "../../src/cards";
 
 // actual card component
-const Card = () => {
-  const [cardState, setCardState] = useState({});
+const Card = ({ character, meaning, notes, ...props }) => {
+  const { width, height } = props;
+  const [cardState, setCardState] = useState({ character, meaning, notes });
 
-  const { character, meaning, notes, index } = useSelector(cardContent);
+  // const cards = useSelector((state) => state.cards.data);
+  // const { char: character, meaning, notes } = cards[index];
+
+  // const { character, meaning, notes, index } = useSelector(cardContent);
 
   // update fields when index or field changes
-  useEffect(() => setMeaning(meaning), [meaning, index]);
-  useEffect(() => setNotes(notes), [notes, index]);
+  // useEffect(() => setMeaning(meaning), [meaning, index]);
+  // useEffect(() => setNotes(notes), [notes, index]);
 
   const setMeaning = (m) => setCardState((s) => ({ ...s, meaning: m }));
   const setNotes = (n) => setCardState((s) => ({ ...s, notes: n }));
@@ -26,8 +30,11 @@ const Card = () => {
   return (
     <MuiCard
       css={{
-        width: 300,
-        minHeight: 400,
+        // width: 300,
+        // minHeight: 400,
+
+        width,
+        height,
 
         display: "flex",
         userSelect: "none",
