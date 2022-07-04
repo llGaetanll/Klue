@@ -10,7 +10,7 @@ import { Main as KeyBinds } from "../components/util/keybinds";
 // main content of the page
 // depends on the mode (normal, edit, etc...)
 import NormalContent from "../components/views/normal";
-import EditContent from "../components/views/edit";
+import EditContent from "../components/views/edit/edit";
 import TestContent from "../components/views/test";
 
 const Load = dynamic(() => import("./load"));
