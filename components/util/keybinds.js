@@ -26,32 +26,34 @@ export const Main = ({ children }) => {
     dispatch(next(option));
   };
 
-  const handlers = {
-    FORWARD: () => dispatch(forward()),
-    BACKWARD: () => dispatch(backward()),
+  // const handlers = {
+  //   FORWARD: () => dispatch(forward()),
+  //   BACKWARD: () => dispatch(backward()),
 
-    EASY: () => handleDiff("easy"),
-    MEDIUM: () => handleDiff("medium"),
-    HARD: () => handleDiff("hard"),
+  //   EASY: () => handleDiff("easy"),
+  //   MEDIUM: () => handleDiff("medium"),
+  //   HARD: () => handleDiff("hard"),
 
-    TOGGLE_REVEAL: useCallback(
-      () => dispatch(setReveal(!reveal)),
-      [dispatch, reveal]
-    ),
-    SET_EDIT: useCallback(
-      (event) => {
-        event.preventDefault();
-        if (!edit) dispatch(setMode("edit"));
-      },
-      [dispatch, edit]
-    ),
+  //   TOGGLE_REVEAL: useCallback(
+  //     () => dispatch(setReveal(!reveal)),
+  //     [dispatch, reveal]
+  //   ),
+  //   SET_EDIT: useCallback(
+  //     (event) => {
+  //       event.preventDefault();
+  //       if (!edit) dispatch(setMode("edit"));
+  //     },
+  //     [dispatch, edit]
+  //   ),
 
-    ESC: useCallback(() => {
-      // if (edit) dispatch(setMode("normal"));
-      if (edit) dispatch(revertMode());
-      if (reveal) dispatch(setReveal(false));
-    }, [dispatch, edit, reveal]),
-  };
+  //   ESC: useCallback(() => {
+  //     // if (edit) dispatch(setMode("normal"));
+  //     if (edit) dispatch(revertMode());
+  //     if (reveal) dispatch(setReveal(false));
+  //   }, [dispatch, edit, reveal]),
+  // };
+
+  const handlers = {};
 
   return (
     <>
