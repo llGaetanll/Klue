@@ -163,10 +163,19 @@ const CardStats = () => {
 };
 
 const Sidebar = () => (
-  <Box display="flex" flex={1} flexDirection="column">
+  <div
+    css={{
+      display: "flex",
+      flex: 1,
+      flexDirection: "column",
+      [theme.breakpoints.down("md")]: {
+        display: "none",
+      },
+    }}
+  >
     <CardStats />
     <Dots />
-  </Box>
+  </div>
 );
 
 export default Sidebar;
