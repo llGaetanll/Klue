@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { makeStyles } from "@mui/styles";
 
 import { Typography, Box, Card as MuiCard, CardContent } from "@mui/material";
 
