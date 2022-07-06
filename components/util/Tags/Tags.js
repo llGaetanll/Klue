@@ -1,18 +1,20 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
 
-import { Box, Button, Chip } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
 
+import Tag from "./Tag";
+
 import {
-  tagSelector,
+  tagListSelector,
   addSelectedTag,
   remSelectedTag,
   clrSelecteddTag,
-} from "../../src/cards";
+} from "../../../src/cards/cards";
 
 const ListItem = styled("li")(({ theme }) => ({
   margin: theme.spacing(0.5),
@@ -22,7 +24,7 @@ const Tags = () => {
   const dispatch = useDispatch();
 
   const selectedTags = useSelector((state) => state.cards.selectedTags);
-  const tags = useSelector(tagSelector);
+  const tags = useSelector(tagListSelector);
 
   const handleClear = () => {
     dispatch(clrSelecteddTag());
@@ -84,7 +86,7 @@ const Tags = () => {
 
         return (
           <ListItem key={`tag-${i}`}>
-            <Chip
+            <Tag
               icon={selected ? <CheckCircleIcon /> : undefined}
               onClick={selected ? handleRem : handleAdd}
               label={tag}
