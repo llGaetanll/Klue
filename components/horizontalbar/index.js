@@ -25,7 +25,7 @@ import CancelIcon from "@mui/icons-material/Close";
 
 import UploadButton from "../util/UploadButton";
 
-import { getCards, setMode, testDoneSelector } from "../../src/cards";
+import { getCards, setMode, testDoneSelector } from "../../src/cards/cards";
 import { FeedbackContext } from "../../util/feedback";
 
 import Range from "./range";

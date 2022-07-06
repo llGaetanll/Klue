@@ -4,7 +4,11 @@ import { motion } from "framer-motion";
 
 import { Box, Typography, Tooltip } from "@mui/material";
 
-import { colorSelector, testingSelector, setIndex } from "../../src/cards";
+import {
+  colorSelector,
+  testingSelector,
+  setIndex,
+} from "../../src/cards/cards";
 
 import theme from "../../util/theme";
 

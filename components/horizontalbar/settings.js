@@ -12,7 +12,7 @@ import {
   DialogActions,
 } from "@mui/material";
 
-import { setRepeat, setAutoAdvance, getCards } from "../../src/cards";
+import { setRepeat, setAutoAdvance, getCards } from "../../src/cards/cards";
 import {
   toggleTheme,
   toggleIndex,

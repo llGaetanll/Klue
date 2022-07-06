@@ -10,9 +10,9 @@ import Time from "../util/time";
 import {
   setMode,
   statSelector,
-  weightSelector,
+  weightRangeSelector,
   characterSelector,
-} from "../../src/cards";
+} from "../../src/cards/cards";
 import { round, formatTime } from "../../util";
 
 const useStyles = makeStyles((theme) => ({
@@ -59,7 +59,7 @@ export const EndOfTest = () => {
 
   const { cardStats, ...headerStats } = useSelector(statSelector);
 
-  const weights = useSelector(weightSelector);
+  const weights = useSelector(weightRangeSelector);
   const characters = useSelector(characterSelector);
 
   const handleMode = (mode) => dispatch(setMode(mode));

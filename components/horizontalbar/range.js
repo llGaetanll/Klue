@@ -15,7 +15,7 @@ import UpdateIcon from "@mui/icons-material/Update";
 
 import theme from "../../util/theme";
 
-import { setRange, testingSelector } from "../../src/cards";
+import { setRange, testingSelector } from "../../src/cards/cards";
 
 const cardCountSelector = createSelector(
   (state) => state.cards.data,

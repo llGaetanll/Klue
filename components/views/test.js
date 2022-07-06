@@ -7,7 +7,7 @@ import { EndOfTest } from "../statistics";
 import Card from "../card/Card";
 import TestOptions from "../card/TestOptions";
 
-import { testDoneSelector } from "../../src/cards";
+import { testDoneSelector } from "../../src/cards/cards";
 
 // what the page looks like in test mode
 const Test = () => {

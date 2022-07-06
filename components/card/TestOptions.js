@@ -13,10 +13,10 @@ import {
   prev,
   forward,
   backward,
-  cardContent,
+  cardContentSelector,
   testingSelector,
   editSelector,
-} from "../../src/cards";
+} from "../../src/cards/cards";
 
 import theme from "../../util/theme";
 
@@ -53,7 +53,7 @@ const TestOptions = () => {
   const ref = useRef();
 
   const cardIndex = useSelector(
-    createSelector(cardContent, (content) => content.index)
+    createSelector(cardContentSelector, (content) => content.index)
   );
 
   const test = useSelector(testingSelector);

@@ -12,7 +12,7 @@ import {
   revertMode,
   next,
   editSelector,
-} from "../../src/cards";
+} from "../../src/cards/cards";
 
 /* Keybinds on the main page */
 export const Main = ({ children }) => {

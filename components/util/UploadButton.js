@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { useDispatch } from "react-redux";
 
 import { FeedbackContext } from "../../util/feedback";
-import { setCards } from "../../src/cards";
+import { setCards } from "../../src/cards/cards";
 
 const UploadButton = ({ children }) => {
   const dispatch = useDispatch();

@@ -10,12 +10,13 @@ import { isEqual } from "lodash";
 import FileSaver from "file-saver";
 import seedrandom from "seedrandom";
 
-import theme from "../util/theme";
-import { formatDate, getDate, quadInterpolation } from "../util";
+import theme from "../../util/theme";
+import { formatDate, getDate, quadInterpolation } from "../../util";
 
 const initialState = {
   data: [],
   range: [0, 1], // default range
+  selectedTags: [], // this is the list of tags that the used has clicked on. It affects which cards are visible
   history: [], // history of all visited cards since the beginning of the test. null by default to disable history
 
   stepper: 0, // used to calculate rng card index
@@ -279,12 +280,34 @@ const reducers = {
     // can't change this during a test
     if (state.mode !== "test") state.autoAdvance = payload;
   },
+
+  /* TAGS */
+  addSelectedTag: (state, { payload }) => {
+    const tag = payload;
+
+    // if the tag waws already selected, ignore
+    if (state.selectedTags.includes(tag)) return;
+
+    state.selectedTags.push(tag);
+  },
+  remSelectedTag: (state, { payload }) => {
+    const tag = payload;
+    const { selectedTags } = state;
+
+    // if the tag already wasn't selected, ignore
+    if (!state.selectedTags.includes(tag)) return;
+
+    state.selectedTags = selectedTags.filter((t) => t !== tag);
+  },
+  clrSelecteddTag: (state) => {
+    state.selectedTags = [];
+  },
 };
 
 /* Selectors */
 
 // computes and returns the content of the card from the index
-export const cardContent = createSelector(
+export const cardContentSelector = createSelector(
   (state) => state.cards.index,
   (state) => state.cards.data,
   (index, cards) => {
@@ -345,27 +368,13 @@ export const characterSelector = createDeepSelector(
   (characters, range) => characters.slice(range[0], range[1] + 1)
 );
 
-// find smallest and largest weight
-export const weightSelector = createDeepSelector(
+// find smallest and largest weights in the card set
+export const weightRangeSelector = createDeepSelector(
   (state) => state.cards.data.map((card) => card.weight),
-  (weights) => {
-    // console.log(weights);
-    // let maxWeight = 0;
-    // let minWeight = 1000;
-
-    let minWeight = Math.min(...weights);
-    let maxWeight = Math.max(...weights);
-
-    /*
-    for (let weight of weights) {
-      if (weight > maxWeight) maxWeight = weight;
-
-      if (weight < minWeight) minWeight = weight;
-    }
-    */
-
-    return { minWeight, maxWeight };
-  }
+  (weights) => ({
+    minWeight: Math.min(...weights),
+    maxWeight: Math.max(...weights),
+  })
 );
 
 // returns mapped data for the cardset visualization in the sidebar
@@ -383,7 +392,7 @@ export const colorSelector = (i) =>
       (state) => state.cards.range,
       (state) => state.cards.history,
       (state) => state.cards.mode,
-      weightSelector,
+      weightRangeSelector,
     ],
     (index, card, range, history, mode, { minWeight, maxWeight }) => {
       const { meaning, notes, weight } = card;
@@ -423,6 +432,42 @@ export const colorSelector = (i) =>
     }
   );
 
+// picks between the two orange colors shown in edit mode
+export const editColorSelector = (i) =>
+  createDeepSelector(
+    [
+      // map through cards to prevent unnecessary rerenders on weight changes
+      (state) =>
+        state.cards.data.map(({ meaning, notes, weight }) => ({
+          meaning,
+          notes,
+          weight,
+        }))[i],
+    ],
+    (card) => {
+      const { meaning, notes } = card;
+      let color = theme.palette.grey[800];
+
+      if (meaning) color = theme.palette.warning.light;
+
+      if (notes) color = theme.palette.warning.dark;
+
+      return color;
+    }
+  );
+
+// given a card weight, this computes a new color between two chosen colors
+// representing the worst and best cards in the entire deck.
+export const _colorSelector = (weight) =>
+  createSelector(weightRangeSelector, ({ minWeight, maxWeight }) => {
+    const quad = quadInterpolation(weight, minWeight, maxWeight);
+
+    return interpolateLab(
+      theme.palette.success.dark,
+      theme.palette.error.dark
+    )(quad);
+  });
+
 // returns statistics about the test that just concluded
 // TODO: since this is used at a particular time in the lifecylcle of the app, maybe a selector is not the best way to do it
 export const statSelector = createSelector(
@@ -461,6 +506,40 @@ export const statSelector = createSelector(
       avgTime,
     };
   }
+);
+
+// filter card list by a list of tags. Note that this is an OR operation,
+// meaning a card will match the filter as long as it has *one* of the tags in
+// the search list.
+export const cardTagsSelector = (tags) =>
+  createSelector(
+    (state) => state.cards.data,
+    (cards) =>
+      cards.filter((card) => {
+        for (const tag of tags)
+          if (card.tags && card.tags.includes(tag)) return true;
+
+        return false;
+      })
+  );
+
+// get a list of all unique tags of every card. This list is sorted alphabetically
+export const tagListSelector = createSelector(
+  (state) => state.cards.data,
+  (cards) =>
+    cards
+      .reduce((tags, card) => {
+        // get the list of tags of the current card
+        const cardTags = card.tags || [];
+
+        // for each tag in the current card,
+        // add to the list iff it's not already in it
+        for (const cardTag of cardTags)
+          tags.includes(cardTag) || tags.push(cardTag);
+
+        return tags;
+      }, [])
+      .sort()
 );
 
 const { reducer, caseReducers, actions } = createSlice({
