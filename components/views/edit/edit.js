@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 
 import Table from "./CardTable/Table";
-// import Card from "../card/Card";
+import { EditCard } from "../../card/Card";
 
 // what the page looks like in edit mode
 // this should be a spreadsheet essentially
@@ -15,7 +15,17 @@ const Edit = () => (
         justifyContent: "center",
       }}
     >
-      <Table />
+      <EditCard
+        char={"切"}
+        meaning={"Cut"}
+        notes={
+          "Think of a Japanese chef cutting up some fish with a *dagger*, and *dicing* (Seven as a primitive) it. "
+        }
+        tags={["Lesson 5"]}
+        width={200}
+        height={300}
+      />
+      {/* <Table /> */}
     </div>
   </>
 );
