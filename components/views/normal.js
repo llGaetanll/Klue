@@ -4,13 +4,16 @@ import { Box } from "@mui/material";
 
 import FixedSizeList from "../util/list/fixedSizeList";
 import Card from "../card/Card";
+import Tags from "../util/Tags/Tags";
+
+import theme from "../../util/theme";
 
 const MAX_CARDS_PER_ROW = 5;
 
-const CARD_HEIGHT = 200;
-const CARD_WIDTH = 150;
+const CARD_HEIGHT = 300;
+const CARD_WIDTH = 200;
 
-// theme.spacing(2)
+// theme.spacing(3)
 const SPACING = 16;
 
 // simple wrapper for getting cards per row
@@ -18,22 +21,28 @@ const getCardsPerRow = (width) =>
   Math.min(MAX_CARDS_PER_ROW, Math.floor(width / (CARD_WIDTH + SPACING)));
 
 const Row = ({ style, rowIndex, cards }) => (
-  <Box style={style} css={{ display: "flex", justifyContent: "center" }}>
+  <Box
+    style={style}
+    css={{
+      display: "flex",
+      justifyContent: "flex-end",
+    }}
+  >
     <div
       css={{
         display: "flex",
         gap: SPACING,
         marginTop: SPACING,
+        marginRight: SPACING,
       }}
     >
-      {cards.map((card, colIndex) => (
+      {cards.map((cardProps, colIndex) => (
         <Card
-          character={card.char}
-          meaning={card.meaning}
-          notes={card.notes}
+          {...cardProps}
           width={CARD_WIDTH}
           height={CARD_HEIGHT}
           key={`card-${rowIndex}-${colIndex}`}
+          // flip
         />
       ))}
     </div>
@@ -48,11 +57,14 @@ const Normal = () => {
     <Box
       css={{
         display: "flex",
+        flexDirection: "column",
         flex: 2,
+        // marginRight: theme.spacing(2),
 
         overflow: "auto",
       }}
     >
+      <Tags />
       <FixedSizeList
         itemCount={({ width }) => {
           const cardsPerRow = getCardsPerRow(width);
