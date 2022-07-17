@@ -15,7 +15,7 @@ import { formatDate, getDate, quadInterpolation } from "../../util";
 
 const initialState = {
   data: [],
-  range: [0, 1], // default range
+  // range: [0, 1], // default range
   selectedTags: [], // this is the list of tags that the used has clicked on. It affects which cards are visible
   history: [], // history of all visited cards since the beginning of the test. null by default to disable history
 
@@ -468,6 +468,34 @@ export const _colorSelector = (weight) =>
     )(quad);
   });
 
+const cardSelected = (tags, card) => {
+  for (const tag of tags) if (card.tags && card.tags.includes(tag)) return true;
+
+  return false;
+};
+
+export const dotColorsSelector = createDeepSelector(
+  [
+    (state) => state.cards.selectedTags,
+    (state) => state.cards.data,
+    weightRangeSelector,
+  ],
+  (tags, weights, { minWeight, maxWeight }) => {
+    return weights.map((card) => {
+      // if the card is not in the list of tags
+      if (tags.length > 0 && !cardSelected(tags, card))
+        return theme.palette.grey[800];
+
+      const quad = quadInterpolation(card.weight, minWeight, maxWeight);
+
+      return interpolateLab(
+        theme.palette.success.dark,
+        theme.palette.error.dark
+      )(quad);
+    });
+  }
+);
+
 // returns statistics about the test that just concluded
 // TODO: since this is used at a particular time in the lifecylcle of the app, maybe a selector is not the best way to do it
 export const statSelector = createSelector(
@@ -514,13 +542,7 @@ export const statSelector = createSelector(
 export const cardTagsSelector = (tags) =>
   createSelector(
     (state) => state.cards.data,
-    (cards) =>
-      cards.filter((card) => {
-        for (const tag of tags)
-          if (card.tags && card.tags.includes(tag)) return true;
-
-        return false;
-      })
+    (cards) => cards.filter((card) => cardSelected(tags, card))
   );
 
 // get a list of all unique tags of every card. This list is NOT sorted alphabetically
