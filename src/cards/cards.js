@@ -523,23 +523,22 @@ export const cardTagsSelector = (tags) =>
       })
   );
 
-// get a list of all unique tags of every card. This list is sorted alphabetically
+// get a list of all unique tags of every card. This list is NOT sorted alphabetically
 export const tagListSelector = createSelector(
   (state) => state.cards.data,
   (cards) =>
-    cards
-      .reduce((tags, card) => {
-        // get the list of tags of the current card
-        const cardTags = card.tags || [];
+    cards.reduce((tags, card) => {
+      // get the list of tags of the current card
+      const cardTags = card.tags || [];
 
-        // for each tag in the current card,
-        // add to the list iff it's not already in it
-        for (const cardTag of cardTags)
-          tags.includes(cardTag) || tags.push(cardTag);
+      // for each tag in the current card,
+      // add to the list iff it's not already in it
+      for (const cardTag of cardTags)
+        tags.includes(cardTag) || tags.push(cardTag);
 
-        return tags;
-      }, [])
-      .sort()
+      return tags;
+    }, [])
+  // .sort()
 );
 
 const { reducer, caseReducers, actions } = createSlice({
