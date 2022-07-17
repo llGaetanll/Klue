@@ -33,11 +33,11 @@ const Tags = () => {
   };
 
   return (
-    <div css={{ display: "flex" }}>
+    <div css={{ display: "flex", alignItems: "center" }}>
       <AnimatePresence>
         {selectedTags.length > 0 && (
           <motion.div
-            css={{ display: "flex" }}
+            // css={{ display: "flex" }}
             // css={{ overflow: "hidden" }}
             initial={{
               opacity: 0,
@@ -56,8 +56,6 @@ const Tags = () => {
               css={{
                 textTransform: "none",
                 whiteSpace: "nowrap",
-
-                margin: theme.spacing(0.5),
               }}
               size="small"
               startIcon={<CloseIcon />}
@@ -68,37 +66,66 @@ const Tags = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <Box
-        sx={{
-          display: "flex",
-          overflow: "auto",
+      <div
+        css={{
+          position: "relative",
+          overflow: "hidden",
 
-          listStyle: "none", // remove the markers
-          p: 1,
-          m: 0,
+          // make the list fade in and out at the edges
+          "&:before": {
+            content: "''",
+            display: "block",
+            position: "absolute",
+            height: "100%",
+            width: theme.spacing(2),
+            background: `linear-gradient(to left, rgba(255,255,255,0), ${theme.palette.background.default})`,
+            left: 0,
+            zIndex: 1,
+          },
+
+          "&:after": {
+            content: "''",
+            display: "block",
+            position: "absolute",
+            height: "100%",
+            width: theme.spacing(2),
+            background: `linear-gradient(to right, rgba(255,255,255,0), ${theme.palette.background.default})`,
+            right: 0,
+            zIndex: 1,
+          },
         }}
-        component="ul"
       >
-        {tags.map((tag, i) => {
-          const selected = selectedTags.includes(tag);
+        <ul
+          css={{
+            display: "flex",
+            overflow: "auto",
+            padding: 0,
+            margin: 0,
 
-          // to add a tag to selected tags
-          const handleAdd = () => dispatch(addSelectedTag(tag));
+            listStyle: "none", // remove the markers
+          }}
+        >
+          {tags.map((tag, i) => {
+            const selected = selectedTags.includes(tag);
 
-          // to remove a tag from selected tags
-          const handleRem = () => dispatch(remSelectedTag(tag));
+            // to add a tag to selected tags
+            const handleAdd = () => dispatch(addSelectedTag(tag));
 
-          return (
-            <ListItem key={`tag-${i}`}>
-              <Tag
-                icon={selected ? <CheckCircleIcon /> : undefined}
-                onClick={selected ? handleRem : handleAdd}
-                label={tag}
-              />
-            </ListItem>
-          );
-        })}
-      </Box>
+            // to remove a tag from selected tags
+            const handleRem = () => dispatch(remSelectedTag(tag));
+
+            return (
+              <ListItem key={`tag-${i}`}>
+                <Tag
+                  icon={selected ? <CheckCircleIcon /> : undefined}
+                  onClick={selected ? handleRem : handleAdd}
+                  label={tag}
+                />
+              </ListItem>
+            );
+          })}
+        </ul>
+      </div>
     </div>
   );
 };

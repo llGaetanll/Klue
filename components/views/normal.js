@@ -98,7 +98,6 @@ const Normal = () => {
             overflow: "hidden",
           }}
         >
-          <Tags />
           <CardList />
         </div>
       </div>

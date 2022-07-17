@@ -30,6 +30,7 @@ import { FeedbackContext } from "../../util/feedback";
 
 import Range from "./range";
 import Settings from "./settings";
+import Tags from "../util/Tags/Tags";
 
 import theme from "../../util/theme";
 
@@ -105,6 +106,7 @@ const NormalBar = () => {
     <Box
       css={{
         display: "flex",
+        gap: theme.spacing(1),
         alignItems: "center",
         height: 64,
 
@@ -114,8 +116,6 @@ const NormalBar = () => {
       <Typography
         variant="h5"
         css={{
-          paddingRight: theme.spacing(2),
-
           fontFamily: "monospace",
           fontWeight: 800,
           fontSize: 20,
@@ -139,12 +139,17 @@ const NormalBar = () => {
         color="primary"
         onClick={handleTest}
         startIcon={<DoneAllIcon />}
-        css={{ whiteSpace: "nowrap" }}
+        css={{ whiteSpace: "nowrap", margin: theme.spacing(1) }}
       >
         Test
       </Button>
 
-      <Range />
+      <Divider />
+
+      {/* <Range /> */}
+      <div css={{ overflow: "auto" }}>
+        <Tags />
+      </div>
 
       <Divider />
 
