@@ -2,6 +2,9 @@ import { useSelector } from "react-redux";
 
 import { Box } from "@mui/material";
 
+import Sidebar from "../sidebar/index";
+import { HorizontalBar } from "../horizontalbar";
+
 import FixedSizeList from "../util/list/fixedSizeList";
 import Card from "../card/Card";
 import Tags from "../util/Tags/Tags";
@@ -49,45 +52,58 @@ const Row = ({ style, rowIndex, cards }) => (
   </Box>
 );
 
-// what the page looks like in normal mode
-const Normal = () => {
+// virtualized card list component
+const CardList = () => {
   const cards = useSelector((state) => state.cards.data);
 
   return (
-    <Box
-      css={{
-        display: "flex",
-        flexDirection: "column",
-        flex: 2,
-        // marginRight: theme.spacing(2),
+    <FixedSizeList
+      itemCount={({ width }) => {
+        const cardsPerRow = getCardsPerRow(width);
 
-        overflow: "auto",
+        return Math.ceil(cards.length / cardsPerRow);
       }}
-    >
-      <Tags />
-      <FixedSizeList
-        itemCount={({ width }) => {
-          const cardsPerRow = getCardsPerRow(width);
+      itemSize={CARD_HEIGHT + SPACING}
+      row={({ index, style, width }) => {
+        const cardsPerRow = getCardsPerRow(width);
 
-          return Math.ceil(cards.length / cardsPerRow);
-        }}
-        itemSize={CARD_HEIGHT + SPACING}
-        row={({ index, style, width }) => {
-          const cardsPerRow = getCardsPerRow(width);
+        return (
+          <Row
+            style={style}
+            cards={cards.slice(cardsPerRow * index, (index + 1) * cardsPerRow)}
+            key={`row-${index}`}
+          />
+        );
+      }}
+    />
+  );
+};
 
-          return (
-            <Row
-              style={style}
-              cards={cards.slice(
-                cardsPerRow * index,
-                (index + 1) * cardsPerRow
-              )}
-              key={`row-${index}`}
-            />
-          );
+// what the page looks like in normal mode
+const Normal = () => {
+  return (
+    <div css={{ display: "flex", flexDirection: "column", width: "100%" }}>
+      <div
+        css={{
+          display: "flex",
+          flex: 1,
         }}
-      />
-    </Box>
+      >
+        <Sidebar />
+        <div
+          css={{
+            display: "flex",
+            flex: 2,
+            flexDirection: "column",
+            overflow: "hidden",
+          }}
+        >
+          <Tags />
+          <CardList />
+        </div>
+      </div>
+      <HorizontalBar />
+    </div>
   );
 };
 
