@@ -16,8 +16,8 @@ const initialState = {
     ESC: "esc",
   },
   theme: "dark",
-  showWeight: false,
-  showIndex: false,
+  showWeight: true,
+  showIndex: true,
 };
 
 const reducers = {
