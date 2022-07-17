@@ -32,21 +32,10 @@ const Index = () => {
   if (cards.length < 1) return <Load />;
 
   return (
-    <Box display="flex" flex={1} flexDirection="column">
+    <>
       <KeyBinds />
-      <Box
-        css={{
-          display: "flex",
-          flexDirection: "row",
-          flex: 1,
-          height: "100vh",
-        }}
-      >
-        <Sidebar />
-        {content}
-      </Box>
-      <HorizontalBar />
-    </Box>
+      <NormalContent />
+    </>
   );
 };
 
