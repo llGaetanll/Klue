@@ -3,12 +3,10 @@ import Document, { Html, Head, Main, NextScript } from "next/document";
 import { ServerStyleSheets } from "@mui/styles";
 import theme from "../util/theme";
 
-const height = { height: "100%" };
-
 export default class MyDocument extends Document {
   render() {
     return (
-      <Html style={height}>
+      <Html style={{ width: "100vw", height: "100vh" }}>
         <Head>
           <meta charSet="utf-8" />
 
@@ -24,7 +22,7 @@ export default class MyDocument extends Document {
 						}
 					`}</style>
         </Head>
-        <body style={height}>
+        <body style={{ width: "100vw", height: "100vh" }}>
           <Main />
           <NextScript />
         </body>
