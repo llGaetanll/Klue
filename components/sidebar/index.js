@@ -39,7 +39,7 @@ const DOT_STYLES = {
 };
 
 // the actual dot component
-const Item = ({ color }) => {
+const Item = ({ color, selected }) => {
   // color of the dot
   // const color = useSelector(colorSelector(index));
 
@@ -51,7 +51,16 @@ const Item = ({ color }) => {
       // animate={selected ? "selected" : "def"}
       variants={variants}
       // onClick={() => handleClick(index)}
-      style={{ ...DOT_STYLES, backgroundColor: color }}
+      css={[
+        {
+          ...DOT_STYLES,
+          backgroundColor: color,
+        },
+        selected || {
+          opacity: 0.4,
+          filter: "blur(1px)",
+        },
+      ]}
     />
   );
 };
@@ -81,8 +90,8 @@ const Dots = () => {
         paddingTop: 0,
       }}
     >
-      {colors.map((color, i) => (
-        <MemoItem key={`key-${i}`} color={color} />
+      {colors.map(({ color, selected }, i) => (
+        <MemoItem key={`key-${i}`} color={color} selected={selected} />
       ))}
       {/* {Array.from({ length }).map((_, i) => (
           <Item index={i} key={`dot-${i}`} handleClick={handleClick} />
@@ -107,14 +116,10 @@ const statStyles = {
   number: {
     fontSize: "1.8em",
     fontFamily: "monospace",
-    color: theme.palette.grey[700],
-
-    marginRight: theme.spacing(1),
   },
   key: {
     textTransform: "uppercase",
-    fontWeight: "bold",
-    color: theme.palette.grey[700],
+    fontWeight: "thin",
 
     marginRight: theme.spacing(1),
   },
@@ -153,7 +158,7 @@ const CardStats = () => {
     <Box css={statStyles.bar}>
       {!testing && showIndex && (
         <Box css={statStyles.section}>
-          <Typography css={statStyles.number}>#</Typography>
+          <Typography css={[statStyles.key, statStyles.number]}>#</Typography>
           <Typography css={statStyles.value}>{index + 1}</Typography>
         </Box>
       )}
@@ -190,6 +195,7 @@ const Sidebar = () => (
       display: "flex",
       flex: 1,
       flexDirection: "column",
+      background: theme.palette.background.paper,
       [theme.breakpoints.down("md")]: {
         display: "none",
       },

@@ -41,6 +41,7 @@ const Tag = ({ ...props }) => {
       }
     >
       <Chip
+        color="secondary"
         css={[
           { userSelect: "none" },
           outlined
