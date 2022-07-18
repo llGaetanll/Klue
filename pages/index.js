@@ -5,7 +5,6 @@ import { Box } from "@mui/material";
 
 import Sidebar from "../components/sidebar/index";
 import { HorizontalBar } from "../components/horizontalbar";
-import { Main as KeyBinds } from "../components/util/keybinds";
 
 // main content of the page
 // depends on the mode (normal, edit, etc...)
@@ -31,12 +30,7 @@ const Index = () => {
 
   if (cards.length < 1) return <Load />;
 
-  return (
-    <>
-      <KeyBinds />
-      <NormalContent />
-    </>
-  );
+  return <NormalContent />;
 };
 
 export default Index;

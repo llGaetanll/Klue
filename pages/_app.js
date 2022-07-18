@@ -7,6 +7,8 @@ import { PersistGate } from "redux-persist/integration/react";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
+import { Main as KeyBinds } from "../components/util/keybinds";
+
 import theme from "../util/theme";
 import store from "../store";
 
@@ -27,6 +29,7 @@ const MyApp = ({ Component, pageProps }) => {
       <PersistGate loading={<p>loading...</p>} persistor={persistor}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
+          <KeyBinds />
           <FeedbackProvider>
             <Component {...pageProps} />
           </FeedbackProvider>
