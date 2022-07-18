@@ -15,7 +15,7 @@ import { formatDate, getDate, quadInterpolation } from "../../util";
 
 const initialState = {
   data: [],
-  // range: [0, 1], // default range
+  selectedCards: [],
   selectedTags: [], // this is the list of tags that the used has clicked on. It affects which cards are visible
   history: [], // history of all visited cards since the beginning of the test. null by default to disable history
 
@@ -78,6 +78,25 @@ const reducers = {
     // increase stepper and increment rng index
     state.stepper = state.stepper + 1;
     caseReducers.setIndex(state, {});
+  },
+  setSelection: (state, { payload }) => {
+    // supportKey is either `shift` or `ctrl/cmd`
+    const { cardIndex, supportKey } = payload;
+
+    if (supportKey === "ctrl") {
+      if (state.selectedCards.includes(cardIndex))
+        state.selectedCards.splice(state.selectedCards.indexOf(cardIndex), 1);
+      else state.selectedCards.push(cardIndex);
+    }
+
+    if (supportKey === "shift") {
+      const last =
+        state.selectedCards[Math.max(0, state.selectedCards.length - 1)];
+
+      for (let i = last; i < cardIndex; i++) state.selectedCards.push(i);
+    }
+
+    if (!supportKey) state.selectedCards = [cardIndex];
   },
 
   /* NORMAL */
@@ -252,14 +271,6 @@ const reducers = {
 
     FileSaver.saveAs(cardsBlob, `cards [${formatDate(getDate())}].json`);
   },
-  setRange: (state, { payload }) => {
-    // don't let the user change the range during a test
-    if (state.mode === "test") return;
-
-    state.range = payload;
-
-    caseReducers.setIndex(state, {});
-  },
   // called in normal mode and edit mode
   forward: (state, _) => {
     caseReducers.setIndex(state, { payload: state.index + 1 });
@@ -422,8 +433,8 @@ export const colorSelector = (i) =>
 
           if (i >= range[0] && i <= range[1])
             color = interpolateLab(
-              theme.palette.success.dark,
-              theme.palette.error.dark
+              theme.palette.weights.best,
+              theme.palette.weights.worst
             )(quad);
         }
       }
@@ -463,8 +474,8 @@ export const _colorSelector = (weight) =>
     const quad = quadInterpolation(weight, minWeight, maxWeight);
 
     return interpolateLab(
-      theme.palette.success.dark,
-      theme.palette.error.dark
+      theme.palette.weights.best,
+      theme.palette.weights.worst
     )(quad);
   });
 
@@ -483,15 +494,16 @@ export const dotColorsSelector = createDeepSelector(
   (tags, weights, { minWeight, maxWeight }) => {
     return weights.map((card) => {
       // if the card is not in the list of tags
-      if (tags.length > 0 && !cardSelected(tags, card))
-        return theme.palette.grey[800];
+      const selected = tags.length === 0 || cardSelected(tags, card);
 
       const quad = quadInterpolation(card.weight, minWeight, maxWeight);
 
-      return interpolateLab(
-        theme.palette.success.dark,
-        theme.palette.error.dark
+      const color = interpolateLab(
+        theme.palette.weights.best,
+        theme.palette.weights.worst
       )(quad);
+
+      return { color, selected };
     });
   }
 );
