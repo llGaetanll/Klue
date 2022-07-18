@@ -165,6 +165,8 @@ const CardRecto = ({ character }) => {
           justifyContent: "center",
 
           backfaceVisibility: "hidden",
+
+          userSelect: "none",
         }}
         variant="h1"
       >
@@ -212,6 +214,10 @@ const CardVerso = ({ meaning, notes }) => {
 const NewCard = ({ char: character, meaning, notes, tags = [], ...props }) => {
   const { flip, width, height } = props;
 
+  // const [flip, setFlip] = useState(false);
+
+  // const handleFlip = () => setFlip((f) => !f);
+
   return (
     <div
       css={{
@@ -222,8 +228,11 @@ const NewCard = ({ char: character, meaning, notes, tags = [], ...props }) => {
         //   transform: "rotateY(180deg)",
         // },
 
+        cursor: "pointer",
+
         perspective: 1000,
       }}
+      // onClick={handleFlip}
     >
       <div
         css={[
