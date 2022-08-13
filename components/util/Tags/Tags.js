@@ -15,7 +15,7 @@ import {
   tagListSelector,
   addSelectedTag,
   remSelectedTag,
-  clrSelecteddTag,
+  clrSelectedTag,
 } from "../../../src/cards/cards";
 
 const ListItem = styled("li")(({ theme }) => ({
@@ -29,7 +29,7 @@ const Tags = () => {
   const tags = useSelector(tagListSelector);
 
   const handleClear = () => {
-    dispatch(clrSelecteddTag());
+    dispatch(clrSelectedTag());
   };
 
   return (
@@ -54,7 +54,6 @@ const Tags = () => {
           >
             <Button
               css={{
-                textTransform: "none",
                 whiteSpace: "nowrap",
               }}
               size="small"
