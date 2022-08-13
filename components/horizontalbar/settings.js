@@ -13,12 +13,7 @@ import {
 } from "@mui/material";
 
 import { setRepeat, setAutoAdvance, getCards } from "../../src/cards/cards";
-import {
-  toggleTheme,
-  toggleIndex,
-  toggleWeight,
-  darkSelector,
-} from "../../src/settings";
+import { toggleIndex, toggleWeight } from "../../src/settings";
 
 const UploadWarning = ({ onClose }) => {
   const dispatch = useDispatch();
