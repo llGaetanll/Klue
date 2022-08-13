@@ -3,24 +3,24 @@ import { createTheme } from "@mui/material/styles";
 const dark = {
   palette: {
     mode: "dark",
-    primary: {
-      light: "#7da0b0",
-      main: "#b3e5fc",
-      dark: "#c2eafc",
-    },
-    secondary: {
-      light: "#efd5a2",
-      main: "#ebcb8b",
-      dark: "#a48e61",
-    },
+    // primary: {
+    //   light: "#7da0b0",
+    //   main: "#b3e5fc",
+    //   dark: "#c2eafc",
+    // },
+    // secondary: {
+    //   light: "#efd5a2",
+    //   main: "#ebcb8b",
+    //   dark: "#a48e61",
+    // },
     weights: {
       best: "#1b5e20",
       worst: "#c62828",
     },
-    background: {
-      default: "#1d1f21",
-      paper: "#373b41",
-    },
+    // background: {
+    //   default: "#1d1f21",
+    //   paper: "#373b41",
+    // },
   },
 };
 
@@ -130,9 +130,18 @@ const createExtendedTheme = () => {
       typography: {
         fontFamily: ['"Inter"', '"Roboto"'],
       },
+      components: {
+        MuiButton: {
+          styleOverrides: {
+            root: {
+              textTransform: "none",
+            },
+          },
+        },
+      },
     },
-    moonlight
-    // beach
+    // moonlight
+    beach
     // dark
   );
 };
