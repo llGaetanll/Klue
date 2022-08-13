@@ -148,6 +148,7 @@ const card = {
   padding: theme.spacing(2),
 
   overflowY: "auto",
+  // boxShadow: "none",
 };
 
 // front side of the card
@@ -212,11 +213,7 @@ const CardVerso = ({ meaning, notes }) => {
 };
 
 const NewCard = ({ char: character, meaning, notes, tags = [], ...props }) => {
-  const { flip, width, height } = props;
-
-  // const [flip, setFlip] = useState(false);
-
-  // const handleFlip = () => setFlip((f) => !f);
+  const { flip, width, height, deck, hideTags } = props;
 
   return (
     <div
@@ -224,15 +221,10 @@ const NewCard = ({ char: character, meaning, notes, tags = [], ...props }) => {
         width,
         height,
 
-        // "&:hover > div": {
-        //   transform: "rotateY(180deg)",
-        // },
-
         cursor: "pointer",
 
         perspective: 1000,
       }}
-      // onClick={handleFlip}
     >
       <div
         css={[
@@ -251,9 +243,16 @@ const NewCard = ({ char: character, meaning, notes, tags = [], ...props }) => {
           flip && { transform: "rotateY(180deg)" },
         ]}
       >
-        <MuiCard css={card}>
+        <MuiCard
+          css={[
+            card,
+            deck && {
+              boxShadow: "0 0 1.5px 0px black",
+            },
+          ]}
+        >
           <CardRecto character={character} />
-          <CardTags tags={tags} />
+          {hideTags || <CardTags tags={tags} />}
         </MuiCard>
         <MuiCard
           css={[

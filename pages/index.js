@@ -10,7 +10,7 @@ import { HorizontalBar } from "../components/horizontalbar";
 // depends on the mode (normal, edit, etc...)
 import NormalContent from "../components/views/normal";
 import EditContent from "../components/views/edit/edit";
-import TestContent from "../components/views/test";
+// import TestContent from "../components/views/test/test";
 
 const Load = dynamic(() => import("./load"));
 
@@ -18,7 +18,7 @@ const Load = dynamic(() => import("./load"));
 const CONTENT = {
   normal: <NormalContent />,
   edit: <EditContent />,
-  test: <TestContent />,
+  // test: <TestContent />,
 };
 
 const Index = () => {
