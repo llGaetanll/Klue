@@ -1,34 +1,39 @@
-import { useContext } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useContext, useState } from "react";
+import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { motion } from "framer-motion";
 
 import {
-  Box,
   Tooltip,
   Typography,
   Button,
+  Slider,
   IconButton,
   DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
   Divider as MuiDivider,
+  ButtonGroup,
 } from "@mui/material";
 
 import GetAppIcon from "@mui/icons-material/GetApp";
 import PublishIcon from "@mui/icons-material/Publish";
 import SettingsIcon from "@mui/icons-material/Settings";
 import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import DoneIcon from "@mui/icons-material/Done";
-import CancelIcon from "@mui/icons-material/Close";
 
 import UploadButton from "../util/UploadButton";
 
-import { getCards, setMode, testDoneSelector } from "../../src/cards/cards";
+import {
+  getCards,
+  setMode,
+  test,
+  testDoneSelector,
+} from "../../src/cards/cards";
 import { FeedbackContext } from "../../util/feedback";
 
-import Range from "./range";
+import TestParams from "./TestModal";
 import Settings from "./settings";
 import Tags from "../util/Tags/Tags";
 
@@ -81,6 +86,7 @@ const Misc = () => {
 };
 
 // confimation dialog that shows up when trying to exit an unfinished test
+// TODO: this might move to some other file later
 const CancelTest = ({ onClose }) => (
   <>
     <DialogTitle>Exit Test?</DialogTitle>
@@ -96,186 +102,76 @@ const CancelTest = ({ onClose }) => (
   </>
 );
 
-const NormalBar = () => {
+export const HorizontalBar = () => {
   const dispatch = useDispatch();
-
-  const handleEdit = () => dispatch(setMode("edit"));
-  const handleTest = () => dispatch(setMode("test"));
-
-  return (
-    <Box
-      css={{
-        display: "flex",
-        gap: theme.spacing(1),
-        alignItems: "center",
-        height: 64,
-
-        padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
-      }}
-    >
-      <Typography
-        variant="h5"
-        css={{
-          fontFamily: "monospace",
-          fontWeight: 800,
-          fontSize: 20,
-        }}
-      >
-        NORMAL
-      </Typography>
-
-      <Divider />
-
-      <Button
-        color="primary"
-        onClick={handleEdit}
-        startIcon={<EditIcon />}
-        css={{ whiteSpace: "nowrap" }}
-      >
-        Edit
-      </Button>
-
-      <Button
-        color="primary"
-        onClick={handleTest}
-        startIcon={<DoneAllIcon />}
-        css={{ whiteSpace: "nowrap", margin: theme.spacing(1) }}
-      >
-        Test
-      </Button>
-
-      <Divider />
-
-      {/* <Range /> */}
-      <div css={{ overflow: "auto" }}>
-        <Tags />
-      </div>
-
-      <Divider />
-
-      <Misc />
-    </Box>
-  );
-};
-
-const EditBar = () => {
-  const dispatch = useDispatch();
-
-  const handleNormal = () => dispatch(setMode("normal"));
-
-  return (
-    <Box
-      css={{
-        display: "flex",
-        alignItems: "center",
-        height: 64,
-
-        padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
-      }}
-    >
-      <Typography
-        variant="h5"
-        css={{
-          paddingRight: theme.spacing(2),
-
-          fontFamily: "monospace",
-          fontWeight: 800,
-          fontSize: 20,
-        }}
-      >
-        EDIT
-      </Typography>
-
-      <Divider />
-
-      <Button
-        color="primary"
-        onClick={handleNormal}
-        startIcon={<SaveIcon />}
-        css={{ whiteSpace: "nowrap" }}
-      >
-        Save
-      </Button>
-
-      <Box flex={1} />
-
-      <Misc />
-    </Box>
-  );
-};
-
-const TestBar = () => {
-  const dispatch = useDispatch();
+  const router = useRouter();
 
   const { setDialog } = useContext(FeedbackContext);
 
-  const handleNormal = () => dispatch(setMode("normal"));
-  const handleCancel = () =>
-    setDialog(<CancelTest />, (exit) => (exit ? handleNormal() : null));
+  const handleEdit = () => dispatch(setMode("edit"));
+  const handleTest = () =>
+    setDialog(<TestParams />, (state) => {
+      // if user cancels
+      if (!state) return;
 
-  // if the test is done, display different button
-  const testDone = useSelector(testDoneSelector);
+      router.push({ pathname: "/test", query: state });
+      // dispatch(test(state));
+    });
 
   return (
-    <Box
-      css={{
-        display: "flex",
-        alignItems: "center",
-        height: 64,
-
-        padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
-      }}
-    >
-      <Typography
-        variant="h5"
+    <div css={{ overflow: "auto" }}>
+      <div
         css={{
-          paddingRight: theme.spacing(2),
+          display: "flex",
+          gap: theme.spacing(1),
+          alignItems: "center",
+          height: 64,
 
-          fontFamily: "monospace",
-          fontWeight: 800,
-          fontSize: 20,
+          padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
         }}
       >
-        TEST
-      </Typography>
+        <Typography
+          variant="h5"
+          css={{
+            fontFamily: "monospace",
+            fontWeight: 800,
+            fontSize: 20,
+          }}
+        >
+          NORMAL
+        </Typography>
 
-      <Divider />
+        <Divider />
 
-      {testDone ? (
         <Button
           color="primary"
-          onClick={handleNormal}
-          startIcon={<DoneIcon />}
+          onClick={handleEdit}
+          startIcon={<EditIcon />}
           css={{ whiteSpace: "nowrap" }}
         >
-          Done
+          Edit
         </Button>
-      ) : (
+
         <Button
           color="primary"
-          onClick={handleCancel}
-          startIcon={<CancelIcon />}
-          css={{ whiteSpace: "nowrap" }}
+          onClick={handleTest}
+          startIcon={<DoneAllIcon />}
+          css={{ whiteSpace: "nowrap", margin: theme.spacing(1) }}
         >
-          Exit
+          Test
         </Button>
-      )}
-    </Box>
+
+        <Divider />
+
+        {/* <Range /> */}
+        <div css={{ overflow: "auto" }}>
+          <Tags />
+        </div>
+
+        <Divider />
+
+        <Misc />
+      </div>
+    </div>
   );
-};
-
-// bar type depends on mode
-const BAR = {
-  normal: <NormalBar />,
-  edit: <EditBar />,
-  test: <TestBar />,
-};
-
-// the bar changes depending on the state of the program.
-export const HorizontalBar = () => {
-  const mode = useSelector((state) => state.cards.mode);
-
-  const bar = BAR[mode];
-
-  return <Box css={{ overflow: "auto" }}>{bar}</Box>;
 };
