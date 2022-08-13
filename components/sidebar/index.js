@@ -156,35 +156,32 @@ const CardStats = () => {
 
   return (
     <Box css={statStyles.bar}>
-      {!testing && showIndex && (
+      {/* {!testing && showIndex && (
         <Box css={statStyles.section}>
           <Typography css={[statStyles.key, statStyles.number]}>#</Typography>
           <Typography css={statStyles.value}>{index + 1}</Typography>
         </Box>
-      )}
+      )} */}
       <Box css={statStyles.section}>
         <Typography css={statStyles.key}>Selected</Typography>
         <Typography css={statStyles.value}>
           {numCards}/{cardCount}
         </Typography>
       </Box>
-      {!testing && showWeight && weight && (
+      {/* {!testing && showWeight && weight && (
         <Box css={statStyles.section}>
           <Typography css={statStyles.key}>Weight</Typography>
           <Tooltip title={weight}>
             <Typography
               css={[
                 statStyles.value,
-                {
-                  /* color */
-                },
               ]}
             >
               {weight.toFixed(3)}
             </Typography>
           </Tooltip>
         </Box>
-      )}
+      )} */}
     </Box>
   );
 };
