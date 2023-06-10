@@ -21,7 +21,7 @@ const rootReducer = combineReducers({
 
 export default configureStore({
   reducer: rootReducer,
-  devTools: true,
+  devTools: true, // TODO: disable in prod
 
   // for use with redux-persist
   middleware: getDefaultMiddleware({

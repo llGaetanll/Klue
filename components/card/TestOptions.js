@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "@reduxjs/toolkit";
 
 import { Paper, Button as MuiButton, IconButton } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+// import { makeStyles } from "@mui/styles";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -20,7 +20,7 @@ import {
 
 import theme from "../../util/theme";
 
-const useStyles = makeStyles((theme) => ({
+/* const useStyles = makeStyles((theme) => ({
   options: {
     display: "flex",
 
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   option: {
     flex: 1,
   },
-}));
+})); */
 
 // button wrapper that unfocuses onClick
 const Button = ({ children, onClick, ...props }) => {
@@ -48,7 +48,7 @@ const Button = ({ children, onClick, ...props }) => {
 };
 
 const TestOptions = () => {
-  const classes = useStyles();
+  // const classes = useStyles();
   const dispatch = useDispatch();
   const ref = useRef();
 

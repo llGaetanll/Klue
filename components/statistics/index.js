@@ -1,7 +1,8 @@
 import { useSelector, useDispatch } from "react-redux";
 import { Box, Button, Typography } from "@mui/material";
 
-import { makeStyles } from "@mui/styles";
+// import { makeStyles } from "@mui/styles";
+import { useTheme } from "@mui/material/styles";
 
 import HeaderStat from "./HeaderStat";
 import VirtualTable from "../util/virtualTable";
@@ -15,7 +16,7 @@ import {
 } from "../../src/cards/cards";
 import { round, formatTime } from "../../util";
 
-const useStyles = makeStyles((theme) => ({
+/* const useStyles = makeStyles((theme) => ({
   endOfTestContainer: {
     display: "flex",
     flexDirection: "column",
@@ -51,10 +52,10 @@ const useStyles = makeStyles((theme) => ({
 
     marginBottom: theme.spacing(2),
   },
-}));
+})); */
 
 export const EndOfTest = () => {
-  const classes = useStyles();
+  const theme = useTheme();
   const dispatch = useDispatch();
 
   const { cardStats, ...headerStats } = useSelector(statSelector);
@@ -67,12 +68,26 @@ export const EndOfTest = () => {
   const { totalTime, avgTime, avgWeightDelta } = headerStats;
 
   return (
-    <Box className={classes.endOfTestContainer}>
+    <Box
+      css={{
+        display: "flex",
+        flexDirection: "column",
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
+      }}
+    >
       <Typography component="h1" variant="h3">
         All Set!
       </Typography>
 
-      <Box className={classes.header}>
+      <Box
+        css={{
+          display: "flex",
+          minWidth: 600,
+
+          margin: `0 ${-theme.spacing(2)}px`,
+        }}
+      >
         <HeaderStat title="Total Time">
           {(styles) => (
             <Time time={formatTime(totalTime, false)} styles={styles} />
@@ -103,8 +118,15 @@ export const EndOfTest = () => {
 
       {/* <Box flex={1} /> */}
 
-      <Box className={classes.stats}>
-        <VirtualTable
+      <Box
+        css={{
+          display: "flex",
+          flex: 1,
+
+          marginBottom: theme.spacing(2),
+        }}
+      >
+        {/* <VirtualTable
           rowCount={characters.length}
           rowGetter={({ index }) => ({
             character: characters[index],
@@ -128,7 +150,7 @@ export const EndOfTest = () => {
               label: "Time",
             },
           ]}
-        />
+        /> */}
       </Box>
 
       <Box display="flex">
